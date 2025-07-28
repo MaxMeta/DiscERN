@@ -1,0 +1,22 @@
+name: discern
+channels:
+  - conda-forge
+  - bioconda
+  - https://repo.anaconda.com/pkgs/main
+  - https://repo.anaconda.com/pkgs/r
+dependencies:
+  # Required if pip needs to compile C/C++ extensions from source
+  - conda-forge::c-compiler    # C compiler
+  - conda-forge::cxx-compiler  # C++ compiler
+  - conda-forge::make          # Build utility often needed by Makefiles
+  - scikit-learn
+  - matplotlib
+  - scipy
+  - numpy
+  - pandas
+  - matplotlib-venn
+  - tqdm
+  - biopython==1.78
+  - python>=3.8
+  - antismash
+  - pyhmmer==0.10.7
