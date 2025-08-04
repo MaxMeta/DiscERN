@@ -1387,8 +1387,7 @@ def change_file_paths(file_paths):
             items_2=name.split("_c")
             num=items_2[-1].split(".")[0]
             new_name=items_2[0]
-            zeros=(3-len(num))*"0"
-            formatted.append(pre_path + new_name+ ".region" + zeros + num + ".gbk")
+            formatted.append(pre_path + new_name+ ".region" + num.zfill(3) + ".gbk")
         else:
             (formatted.append(fp))
     return formatted

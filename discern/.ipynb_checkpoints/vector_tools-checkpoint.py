@@ -138,13 +138,15 @@ def analyse_vector_collections(
 
     return results
 
+
+
 def plot_hclust_dendrogram(
     vector_dict: Dict[str, np.ndarray],
     distance_metric: str = 'cosine',
     linkage_method: str = 'average',
     color_threshold: Optional[float] = None,
     figsize: Tuple[int, int] = (10, 7),
-    orientation: str = 'top',
+    orientation: str = 'right',
     leaf_font_size: Optional[int] = None, # Default will be set based on N
     title: str = 'Hierarchical Clustering Dendrogram',
     xlabel: Optional[str] = None,
@@ -204,7 +206,7 @@ def plot_hclust_dendrogram(
     if not all(isinstance(v, np.ndarray) for v in vectors):
         raise ValueError("All values in vector_dict must be NumPy arrays.")
 
-    # --- Input Validation ---
+    # Input Validation
     try:
         # Stack vectors into a 2D array for pdist
         vector_matrix = np.vstack(vectors)
@@ -223,10 +225,10 @@ def plot_hclust_dendrogram(
     if linkage_method == 'ward' and distance_metric != 'euclidean':
         raise ValueError("Ward linkage method requires the 'euclidean' distance metric.")
 
-    # --- Set Defaults ---
+
     if leaf_font_size is None:
         # Heuristic: Smaller font for many leaves, larger for few. Caps at ~10-12.
-        leaf_font_size = max(4, min(10, int(150 / n_vectors))) if n_vectors > 15 else 10
+        leaf_font_size = max(4, min(15, int(300 / n_vectors))) if n_vectors > 15 else 15
 
     default_ylabel = f'{distance_metric.capitalize()} Distance'
     default_xlabel = 'Sample Index / Cluster'
@@ -236,7 +238,6 @@ def plot_hclust_dendrogram(
     xlabel = xlabel if xlabel is not None else default_xlabel
     ylabel = ylabel if ylabel is not None else default_ylabel
 
-    # --- Core Clustering ---
     try:
         # Calculate condensed pairwise distance matrix
         condensed_dist_matrix = pdist(vector_matrix, metric=distance_metric)
@@ -246,7 +247,6 @@ def plot_hclust_dendrogram(
     except Exception as e:
         raise RuntimeError(f"Error during distance calculation or linkage: {e}") from e
 
-    # --- Plotting ---
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)
     else:
@@ -265,20 +265,12 @@ def plot_hclust_dendrogram(
         ax.set_title(title, fontsize=plt.rcParams.get('axes.titlesize', 12))
         ax.set_xlabel(xlabel)
         ax.set_ylabel(ylabel)
-
-        # Adjust layout - might need manual tweaking depending on label length
         fig.tight_layout()
 
     except Exception as e:
         warnings.warn(f"Error during dendrogram plotting: {e}")
-        # Optionally return None or raise error depending on desired behavior
         return None
     
 
 
-    return ax
-
-# add h-clust function
-# make a figure
-# labels at the end
-# can then specify cut height
+    return ax, condensed_dist_matrix 
