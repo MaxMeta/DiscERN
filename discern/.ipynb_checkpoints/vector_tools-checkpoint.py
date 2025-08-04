@@ -274,3 +274,272 @@ def plot_hclust_dendrogram(
 
 
     return ax, condensed_dist_matrix 
+
+def average_condensed_dms(
+    matrices: List[Union[np.ndarray, list]]
+) -> np.ndarray:
+    """
+    Calculates the element-wise average of a collection of condensed distance matrices.
+
+    A condensed distance matrix is a flat, 1D array representing the upper
+    triangle of a square distance matrix, as produced by functions like
+    `scipy.spatial.distance.pdist`.
+
+    Args:
+        matrices: A list or tuple of 1D NumPy arrays or lists. All matrices
+                  in the collection must have the same length.
+
+    Returns:
+        A 1D NumPy array representing the average condensed distance matrix.
+
+    Raises:
+        ValueError: If the input list is empty, or if the matrices within
+                    the list do not all have the same shape.
+        TypeError: If elements of the list cannot be converted to NumPy arrays.
+    """
+    # 1. Input Validation
+    if not isinstance(matrices, (list, tuple)) or len(matrices) == 0:
+        raise ValueError("Input must be a non-empty list or tuple of distance matrices.")
+
+    try:
+        # Convert all elements to NumPy arrays for consistency and efficiency
+        matrices_np = [np.asarray(m) for m in matrices]
+    except Exception as e:
+        raise TypeError(f"All elements in the input collection must be array-like. Error: {e}")
+
+    first_shape = matrices_np[0].shape
+    # Check that all matrices have the same shape and are 1D
+    if any(m.shape != first_shape for m in matrices_np[1:]):
+        raise ValueError("All distance matrices in the collection must have the same shape.")
+    if len(first_shape) != 1:
+        raise ValueError("Input matrices must be 1D condensed distance matrices.")
+
+    # 2. Averaging using NumPy
+    # Stack the 1D arrays into a 2D array where each row is a matrix.
+    # For N matrices of length K, this creates an (N, K) array.
+    stacked_matrices = np.stack(matrices_np)
+
+    # Calculate the mean along axis 0 (i.e., down the columns). This computes
+    # the average for each position across all matrices.
+    average_matrix = np.mean(stacked_matrices, axis=0)
+
+    return average_matrix
+
+def build_newick_string(node, labels):
+    """
+    Recursively builds a Newick string from a SciPy ClusterNode object.
+    This function correctly includes branch lengths.
+
+    Args:
+        node (scipy.cluster.hierarchy.ClusterNode): The current node in the tree.
+        labels (List[str]): The list of leaf labels.
+
+    Returns:
+        str: The Newick formatted string for the subtree rooted at this node.
+    """
+    # If the node is a leaf, return its label. The branch length will be added by the parent call.
+    if node.is_leaf():
+        return labels[node.id]
+    
+    # If the node is not a leaf, it has children. Recursively build their strings.
+    else:
+        # Get the Newick strings for the left and right children
+        left_child_str = build_newick_string(node.get_left(), labels)
+        right_child_str = build_newick_string(node.get_right(), labels)
+        
+        # Calculate the branch length for each child.
+        # It's the distance of the parent node minus the distance of the child node.
+        # For a leaf, its own distance is 0.
+        left_branch_length = node.dist - node.get_left().dist
+        right_branch_length = node.dist - node.get_right().dist
+        
+        # Combine them into the Newick format: (left:len,right:len)
+        return f"({left_child_str}:{left_branch_length:.6f},{right_child_str}:{right_branch_length:.6f})"
+
+
+def generate_hclust_tree(
+    condensed_dm: np.ndarray, 
+    labels: List[str], 
+    output_filepath_newick: str, 
+    pdf_output_filepath: Optional[str] = None,
+    method: str = 'average'
+) -> None:
+    """
+    Performs hierarchical clustering, saves the tree to a Newick file,
+    and optionally generates and saves a dendrogram plot to a PDF.
+
+    Args:
+        condensed_dm (np.ndarray): A 1D NumPy array representing the condensed
+                                   distance matrix.
+        labels (List[str]): A list of labels for the items being clustered.
+        output_filepath_newick (str): The path to save the output Newick file.
+        pdf_output_filepath (Optional[str], optional): The path to save the output
+                                                     dendrogram PDF. If None, no
+                                                     PDF is created. Defaults to None.
+        method (str, optional): The linkage algorithm to use. Defaults to 'average'.
+
+    Raises:
+        ValueError: If the number of labels does not match the number of items.
+    """
+    #Validation
+    num_items = int(round((1 + np.sqrt(1 + 8 * len(condensed_dm))) / 2))
+    if len(labels) != num_items:
+        raise ValueError(
+            f"The number of labels ({len(labels)}) does not match the number of "
+            f"items ({num_items}) inferred from the distance matrix."
+        )
+
+    #Perform hierarchical clustering
+    print(f"Performing hierarchical clustering using the '{method}' method...")
+    linkage_matrix = linkage(condensed_dm, method=method)
+
+    if pdf_output_filepath:
+        print(f"Generating dendrogram plot for PDF output...")
+        try:
+            # Dynamically adjust figure height based on the number of labels
+            # This prevents labels from overlapping on large trees
+            fig_height = max(8, len(labels) * 0.25)
+            fig, ax = plt.subplots(figsize=(10, fig_height))
+
+            dendrogram(
+                linkage_matrix,
+                labels=labels,
+                orientation='right', # 'right' or 'left' is better for many labels
+                leaf_font_size=8,
+                ax=ax
+            )
+            
+            ax.set_title(f"Hierarchical Clustering Dendrogram (Method: {method})")
+            ax.set_xlabel("Distance")
+            plt.tight_layout() # Adjust plot to ensure everything fits
+            
+            # Save the figure to a PDF
+            plt.savefig(pdf_output_filepath, format='pdf')
+            plt.close(fig) # Close the figure to free up memory
+            print(f"Successfully saved dendrogram plot to: {pdf_output_filepath}")
+        except Exception as e:
+            print(f"Error generating or saving PDF: {e}")
+    
+    #Convert the linkage matrix to a root ClusterNode object
+    print("Converting linkage matrix to a tree object using to_tree()...")
+    tree = to_tree(linkage_matrix, rd=False)
+
+    #Build the Newick string from the tree structure using our helper function
+    print("Generating Newick tree string...")
+    newick_string = build_newick_string(tree, labels) + ";"
+
+    #Save the Newick string to a file
+    try:
+        with open(output_filepath_newick, 'w') as f:
+            f.write(newick_string)
+        print(f"Successfully saved Newick tree to: {output_filepath_newick}")
+    except IOError as e:
+        print(f"Error saving Newick file: {e}")
+
+def get_vecs_for_trees(passing_hits_by_k,min_k=3):
+    """
+    get gbk paths (keys) to use in tree making
+    
+    """
+    to_return=[]
+    for k in (1,2,3,4):
+        if k>=min_k and k in passing_hits_by_k:
+            to_return.extend(passing_hits_by_k[k])
+    return to_return
+
+def split_on_second_to_last(path_str):
+    """
+    Splits a path at the second-to-last separator using os.path.split().
+    Returns a tuple (head, tail).
+    """
+    temp_head, tail1 = os.path.split(path_str)
+    head, tail2 = os.path.split(temp_head)
+    tail = os.path.join(tail2, tail1)
+    
+    return head, tail
+
+def make_trees(out_folder_path,
+               vecs_to_use,
+               refs,
+               bs_vecs,
+               cb_vecs,
+               pol_vecs,
+               mibig_vecs_bs,
+               mibig_vecs_cb,
+               mibig_vecs_pol,
+               use_pol=True,
+               use_bs=True,
+               use_cb=True
+              ):
+    
+    """
+    make tree files from hits and references using list returned by
+    get_vecs_for_trees
+    """
+    
+    cb_ax=None
+    cb_mat=None
+    bs_ax=None
+    bs_mat=None
+    pol_mat=None
+    pol_ax=None
+    
+    if use_pol:
+        pol_subset={}
+        #pol_subset_labels=[] #just use vecs_to_use + ref
+        for vec in vecs_to_use:
+            strain,bgc=os.path.split(vec)
+            #print(strain,">>",bgc)
+            json_name=os.path.split(strain)[-1][:-3]+'json'
+            pv_key=os.path.join(strain,json_name)
+            bgc_number=bgc.split(".")[-2].split('region')[-1].lstrip("0")
+            contig_name=bgc.split(".region")[0]
+            pv_key2=contig_name+"::"+bgc_number
+            #print(pv_key,pv_key2)
+            pol_subset[split_on_second_to_last(vec)[-1]]=pol_vecs[pv_key][pv_key2]
+
+        for ref in refs:
+            pol_subset[ref]=mibig_vecs_pol[ref]
+            
+        pol_mat,_,pol_ax=hierarchical_cluster_sets(list(pol_subset.values()),
+                                           list(pol_subset.keys()))
+        labels=list(pol_subset.keys())
+        pol_ax.figure.savefig(os.path.join(out_folder_path,'pol_denrogram.pdf'))
+
+    if use_bs:
+        bs_subset={}
+        #pol_subset_labels=[] #just use vecs_to_use + ref
+        for vec in vecs_to_use:
+            bs_subset[split_on_second_to_last(vec)[-1]]=bs_vecs[vec]
+
+        for ref in refs:
+            bs_subset[ref]=mibig_vecs_bs[ref]
+           
+        bs_subset=make_dense_vectors(bs_subset)
+        bs_ax, bs_mat=plot_hclust_dendrogram(bs_subset)
+        labels=list(bs_subset.keys())
+        bs_ax.figure.savefig(os.path.join(out_folder_path,'bs_denrogram.pdf'))
+
+
+    if use_cb:
+        cb_subset={}
+        #pol_subset_labels=[] #just use vecs_to_use + ref
+        for vec in vecs_to_use:
+            cb_subset[split_on_second_to_last(vec)[-1]]=cb_vecs[vec]
+
+        for ref in refs:
+            cb_subset[ref]=mibig_vecs_cb[ref]
+            
+        cb_subset=make_dense_vectors(cb_subset)
+        cb_ax, cb_mat=plot_hclust_dendrogram(cb_subset)
+        labels=list(cb_subset.keys())
+        cb_ax.figure.savefig(os.path.join(out_folder_path,'cb_denrogram.pdf'))
+
+            
+
+
+    mean_matrix=average_condensed_dms([i for i in [cb_mat,bs_mat,pol_mat] if \
+                                       type(i)==np.ndarray])
+    newick_out_path=os.path.join(out_folder_path,"newick_tree.txt")
+    pdf_out_path=os.path.join(out_folder_path,"combined_tree.pdf")
+    generate_hclust_tree(mean_matrix,labels,newick_out_path,pdf_out_path)
