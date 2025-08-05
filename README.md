@@ -21,8 +21,6 @@
 ## Overview
 DiscERN is an automated genome mining tool for the targeted discovery of bacterial natural products. It expands user-defined families of Biosynthetic Gene Clusters (BGCs) by identifying evolutionarily related BGCs from large genomic datasets.
 
-While tools like antiSMASH, BiG-SCAPE, and BiG-SLiCE are powerful for BGC prediction and unsupervised clustering, DiscERN is optimized for the targeted expansion of specific, user-defined BGC families. This is particularly useful when the goal is to find novel members of a known compound class for discovery and heterologous expression.
-
 To achieve this, DiscERN uses a flexible ensemble method that integrates four complementary algorithms. These algorithms classify BGCs based on three distinct measures of relatedness: Pfam domain content, direct protein sequence similarity, and predicted final product structure. This multi-modal approach allows DiscERN to strategically balance discovery sensitivity with predictive precision, providing a reliable path from genomic data to a prioritized list of candidate BGCs.
 
 
@@ -37,33 +35,13 @@ DiscERN is designed to be installed and run within a Conda environment to manage
 
 ### Step 1: Get the DiscERN Source Code
 
-You can get the source code either by cloning the repository with Git or by downloading it as a ZIP file.
-
-#### Option A: Using Git (Recommended)
-This is the recommended method as it makes updating the software straightforward.
 
 ```bash
 git clone <add URL>
 cd DiscERN/
 ```
 
-
-#### Option B: Downloading a ZIP File
-If you do not have Git, you can download the source code directly.
-
-```bash
-# Download the main branch as a ZIP file
-wget <add URL>
-
-# Unzip the archive
-<add name>
-
-# The unzipped folder is typically named 'DiscERN-main'. Navigate into it.
-cd <add name>
-```
-*
-
-**From this point on, all commands should be run from within the `DiscERN/` or `<add name>` directory.**
+**From this point on, all commands should be run from within the `DiscERN/` directory.**
 
 ### Step 2: Download and Set Up BiG-SLiCE Models
 
