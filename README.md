@@ -17,8 +17,6 @@
 ## Overview
 DiscERN is an automated genome mining tool for the targeted discovery of bacterial natural products. It expands user-defined families of Biosynthetic Gene Clusters (BGCs) by identifying evolutionarily related BGCs from large genomic datasets.
 
-While tools like antiSMASH, BiG-SCAPE, and BiG-SLiCE are powerful for BGC prediction and unsupervised clustering, DiscERN is optimized for the targeted expansion of specific, user-defined BGC families. This is particularly useful when the goal is to find novel members of a known compound class for discovery and heterologous expression.
-
 To achieve this, DiscERN uses a flexible ensemble method that integrates four complementary algorithms. These algorithms classify BGCs based on three distinct measures of relatedness: Pfam domain content, direct protein sequence similarity, and predicted final product structure. This multi-modal approach allows DiscERN to strategically balance discovery sensitivity with predictive precision, providing a reliable path from genomic data to a prioritized list of candidate BGCs.
 
 
