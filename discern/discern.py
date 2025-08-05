@@ -6,6 +6,8 @@ from .funcs_2 import *
 from .vector_tools import * 
 from .polymer_tools import *
 
+#should work with AntiSMASH < 7 if corresponding mibig ref files provided ... todo
+
 _THIS_DIR = pathlib.Path(__file__).parent.resolve()
 _DEFAULT_DATA_DIR = _THIS_DIR / "data"
 _DEFAULT_DB_DIR = _THIS_DIR / "bigslice_models"
@@ -33,39 +35,85 @@ def main():
 
     parser = argparse.ArgumentParser(description="arguments for main script")
     
-    parser.add_argument("-a", "--antismash_dir", help="Base directory containing antismash outputs.")
+    parser.add_argument("-a", "--antismash_dir", 
+                        help="Base directory containing antismash outputs."
+    )
 
-    parser.add_argument("-o", "--output_dir", default=None, help="path for output folder to create")
-    parser.add_argument("-c", "--num_cpus", type=int, default=0,
-                        help="Number of CPUs (default: all available physical cores).")
-
-    parser.add_argument("-r", "--reference_bgcs", default=None, 
-                        help="reference bgcs defining family to be expanded")
-
-    parser.add_argument("-b", "--beta", default=None, 
-                        help="use f-beta score instead of mcc, define value of beta here")
-
-    parser.add_argument("-u","--reuse", default=None,
-                          help="path to previous output directory to reuse. -a should be input that was used to make the output")
+    parser.add_argument("-o", "--output_dir", 
+                        default=None, help="path for output folder to create"
+    )
     
-    parser.add_argument("-s","--resmash", action='store_true',default=False,
-                              help="run antismash analysis on combined gbk outputs")
+    parser.add_argument("-c", "--num_cpus", 
+                        type=int, 
+                        default=0,
+                        help="Number of CPUs (default: all available physical cores)."
+    )
 
-    parser.add_argument("-x","--mibig_exclude", default=None,
-                              help="file or space seperated string of MiBig BGCs to ignore during analysis")
+    parser.add_argument("-r", "--reference_bgcs", 
+                        default=None, 
+                        help="reference bgcs defining family to be expanded"
+    )
 
-    parser.add_argument("--bigslice_cutoff", default=None,
-                              help="cutoff to use for inclusion with bigslice vectors")
+    parser.add_argument("-b", "--beta", 
+                        default=None, 
+                        help="use f-beta score instead of mcc, define value of beta here"
+    )
+
+    parser.add_argument("-u","--reuse", 
+                        default=None,
+                        help="path to previous output directory to reuse." 
+                          "-a should be set to the input dir that was used to make the output"
+    )
     
-    parser.add_argument("--clusterblast_cutoff", default=None,
-                              help="cutoff to use for inclusion with clusterblast vectors")
+    parser.add_argument("-s","--resmash", 
+                        action='store_true',
+                        default=False,
+                        help="run antismash analysis on combined gbk outputs"
+    )
 
-    parser.add_argument("--hclust", default=True, 
+    parser.add_argument("-x","--mibig_exclude", 
+                        default=None,
+                        help="file or space seperated string of MiBig BGCs to ignore during analysis"
+    )
+
+    parser.add_argument("--bigslice_cutoff", 
+                        default=None,
+                        help="cutoff to use for inclusion with bigslice vectors"
+    )
+    
+    parser.add_argument("--clusterblast_cutoff", 
+                        default=None,
+                        help="cutoff to use for inclusion with clusterblast vectors"
+    )
+
+    parser.add_argument("--hclust", 
+                        default=True, 
                         help="conduct hierachical clustering of reference vectors")
 
-    parser.add_argument("--vec_check", default=True, 
-                        help="check ref collection for outliers, and possible mibig entrires that should be added")
+    parser.add_argument("-v","--vec_check", 
+                        default=True, 
+                        help="check ref collection for outliers, and possible mibig entrires that should be added"
+                        "useful for optimising bgc familiy definition"
+    )
 
+    parser.add_argument(
+        "-p", "--poly_search",
+        action='store_true',  
+        default=False,        
+        help="Run polymer prediction based search for NRPS/PKS containing BGCs. "
+             "Recommended for NRPS/PKS BGCs with >= 5 modules."
+    )
+    parser.add_argument(
+        "--as6",
+        action='store_true',  
+        default=False,        
+        help="Use antiSMASH 6 outputs"
+    ) 
+    
+    parser.add_argument("-k", "--min_k", 
+                        default=3, 
+                        help="minimum algorithm support for hclust"
+    )
     args=parser.parse_args()
 
     antismash_dir=args.antismash_dir
@@ -78,7 +126,12 @@ def main():
     resmash=args.resmash
     hclust=args.hclust
     vec_check=args.vec_check
+    as6=args.as6
 
+    if not 1<=args.min_k<=4:
+        print("min_k must be between 1-4. Setting to default value")
+        args.min_k=3
+        
     if args.clusterblast_cutoff:
         ccb=float(args.clusterblast_cutoff)
     else:
@@ -97,19 +150,42 @@ def main():
         
         ref_set_bs=glob.glob(os.path.join(ref_set,"*.gbk"))     
         ref_set_cb=glob.glob(os.path.join(ref_set,"*.txt"))    
-        ref_bs_vecs=make_sparse_dict(ref_set,db_dir,num_cpus=num_cpus,
-                                     glob_pattern="*.gbk")
-        
+
         ref_set_pol=glob.glob(os.path.join(ref_set,"*.json"))
-        ref_bs_vecs_rf={key.split(":")[0]:ref_bs_vecs[key] for key in ref_bs_vecs}
+        
+        if not len(ref_set_bs)==len(ref_set_cb):
+            print("number of referenceknownclusterblast text files and gbk files not equal")
+            return 
+            
+        if args.use_pol:
+            if not len(ref_set_bs)==len(ref_set_pol):
+                print("number of json text files and gbk files not equal")
+                return
+
+        ref_labels=[os.path.split(i)[-1].rsplit(".",1)[0] for i in ref_set_bs]
+        
+        ref_bs_vecs=make_sparse_dict(ref_set_bs,db_dir,num_cpus=num_cpus,
+                                     glob_pattern="*.gbk")        
+        ref_bs_vecs_rf={os.path.split(key)[-1].rsplit(".",1)[0]:ref_bs_vecs[key]\
+                        for key in ref_bs_vecs}
         ref_bs_vecs=ref_bs_vecs_rf
-        ref_cb_vecs=parse_cb_outputs(ref_set,glob_pattern="*.txt")
-        ref_pol_vecs=make_polymer_dict(ref_set,glob_pattern="*.json")
+        
+        ref_cb_vecs=parse_cb_outputs(ref_set_cb,glob_pattern="*.txt")
+        ref_cb_vecs_rf={os.path.split(key)[-1].rsplit(".",1)[0]:ref_cb_vecs[key]\
+                        for key in ref_cb_vecs}
+        ref_cb_vecs=ref_cb_vecs_rf
+        
+        ref_pol_vecs=make_polymer_dict(ref_set_pol,glob_pattern="*.json",as6=as6)
+        ref_pol_vecs_rf={os.path.split(key)[-1].rsplit(".",1)[0]:ref_pol_vecs[key]\
+                        for key in ref_pol_vecs}
+        ref_pol_vecs=ref_pol_vecs_rf
+        
         if mibig_exclude:
             for key in ref_cb_vecs:#delete  excluded BGCs from ref cb vecs
                 for bgc in mibig_exclude:
                     if bgc in ref_cb_vecs[key]:
                         del ref_cb_vecs[key][bgc]
+        ref_set=ref_labels
         ref_dir=True
 
     elif os.path.isfile(ref_set):
@@ -219,76 +295,70 @@ def main():
             json.dump(all_counts,F,indent=4)
     if reuse:
         print("loading previously constructed polymer dict from file")
-        with open(os.path.join(reuse,"poly_dict.pkl")) as F:
-            poly_dict=json.load(F)
+        with open(os.path.join(reuse,"poly_dict.pkl"),'rb') as F:
+            poly_dict=pickle.load(F)
     else:
         print("making polymer dict")
-        poly_dict=make_polymer_dict(antismash_dir)
+        poly_dict=make_polymer_dict(antismash_dir,as6=as6)
         with open(os.path.join(output_dir,"poly_dict.pkl"),'wb') as F:
             pickle.dump(poly_dict,F)    
 
-    if ref_dir:
-        print('finding conserved features from genbank files')
-        conserved_features=flatten_nested_dict(analyse_genbank_set(ref_set_bs, feature_dict))
-        
-    else:
-        print('finding conserved features from mibig vecs')
-        conserved_features=flatten_nested_dict(analyse_mibig_set(ref_set, mibig_counts))
-    print(conserved_features)
+
+
+    print('finding conserved features from mibig vecs')
+    conserved_features=flatten_nested_dict(analyse_mibig_set(ref_set, mibig_counts))
+    #print(conserved_features)
     
     print('finding bs vec hits')
     
-    if ref_dir:
-        bs_hits=find_hits(bs_vecs,mibig_vecs_bs,ref_set_bs,beta=beta,cutoff=cbs)
-    else:
-        bs_hits=find_hits(bs_vecs,mibig_vecs_bs,ref_set,beta=beta,cutoff=cbs)
+
+    bs_hits, bs_cutoff = find_hits(bs_vecs,mibig_vecs_bs,ref_set,beta=beta,cutoff=cbs)
        
-    print('finding cb vec hits')
+    print('finding cb vec hits')    
+ 
+    cb_hits, cb_cutoff = find_hits(cb_vecs,mibig_vecs_cb,ref_set,beta=beta,cutoff=ccb) 
 
-
-    if ref_dir:
-        cb_hits=find_hits(cb_vecs,mibig_vecs_cb,ref_set_cb,beta=beta,cutoff=ccb)
-    else:  
-        cb_hits=find_hits(cb_vecs,mibig_vecs_cb,ref_set,beta=beta,cutoff=ccb) 
-
-    #add run_polymer=True clause
-    print('finding polymer matches')    
-    pol_matches=get_polymer_matches(poly_dict,mibig_vecs_pol)
-
-    
-    if ref_dir:        
-        stats=get_polymer_stats(mibig_vecs_pol,ref_set_pol)#updated version with added ref_dir polymers
-        pol_threshold, pol_f1, pol_precision, pol_recall, pol_tp,\
-        pol_fp, pol_fn = find_best_f1_threshold(stats['TP'],stats['FP'],stringent=True)
-        pol_hits=filter_polymer_matches(pol_matches,ref_set_pol,pol_threshold)
-        
-    else:  
+    if args.poly_search:
+        print('finding polymer matches')    
+        pol_matches=get_polymer_matches(poly_dict,mibig_vecs_pol)
+ 
         stats=get_polymer_stats(mibig_vecs_pol,ref_set)
         pol_threshold, pol_f1, pol_precision, pol_recall, pol_tp,\
         pol_fp, pol_fn = find_best_f1_threshold(stats['TP'],stats['FP'],stringent=True)
         pol_hit_dict=filter_polymer_matches(pol_matches,ref_set,pol_threshold)
+    
+    
+        pol_hits=set([polymer_dict_key_to_gbk_path(key) for key in pol_hit_dict])
 
-    pol_hits=set([polymer_dict_key_to_gbk_path(key) for key in pol_hit_dict])
+        #need to debug this (i think)
+    
+        #print_match_scores(pol_hit_dict,mibig_vecs_pol,poly_dict)
+    
+    
+        match_stats=get_match_stats(pol_hit_dict,mibig_vecs_pol,poly_dict)
+    
+        with open(os.path.join(output_dir,'polymer_matches.json'),'w') as F:
+            json.dump(match_stats,F,indent=4)
 
-    print_match_scores(pol_hit_dict,mibig_vecs_pol,poly_dict)
+    else:
+        pol_hits=set({})#empty set for subsequent hits_by_k formatting
             
 
     if not ref_dir:
         print('finding ol hits')
         ol_hits=find_hits_intersection(mibig_vecs_cb,cb_vecs,ref_set)
         ol_hits=set(change_file_paths(ol_hits))
+    else:
+        ol_hits=set({})#empty set for subsequent hits_by_k
 
     cb_hits=set(change_file_paths(cb_hits))
     bs_hits=set(bs_hits)
 
     print('filtering by feature counts')
 
-    if ref_dir:
-        hits_by_k=find_elements_in_n_of_k_sets([cb_hits,bs_hits,pol_hits])
 
 
-    else:
-        hits_by_k=find_elements_in_n_of_k_sets([cb_hits,bs_hits,pol_hits,ol_hits])
+    hits_by_k=find_elements_in_n_of_k_sets([cb_hits,bs_hits,pol_hits,ol_hits])
 
     passing_hits_by_k={}
     failing_hits_by_k={}
@@ -318,16 +388,47 @@ def main():
             resmash_hits(ogbk_file, output_dir=os.path.join(output_dir,out_name),num_cpus=num_cpus)
 
     if hclust:
+
+        print(poly_dict.keys())
+
+        vecs_to_use=get_vecs_for_trees(passing_hits_by_k,args.min_k)
+        
+        make_trees(output_dir,vecs_to_use,ref_set,
+                   bs_vecs,cb_vecs,
+                   poly_dict,mibig_vecs_bs,
+                   mibig_vecs_cb,mibig_vecs_pol,
+                   use_pol=args.poly_search
+                  )
+
+
+    if hclust:
         if ref_dir:
-            dense_vecs_cb=make_dense_vectors({os.path.split(path)[-1]:ref_cb_vecs[path] for path in ref_cb_vecs})
-            dense_vecs_bs=make_dense_vectors({os.path.split(path)[-1]:ref_bs_vecs[path] for path in ref_bs_vecs})
+            dense_vecs_cb=make_dense_vectors({os.path.split(path)[-1]:ref_cb_vecs[path]\
+                                              for path in ref_cb_vecs})
+            dense_vecs_bs=make_dense_vectors({os.path.split(path)[-1]:ref_bs_vecs[path]\
+                                              for path in ref_bs_vecs})
+            if args.poly_search:
+                pol_sets=[]
+                pol_labels=[]
+                for bgc in ref_pol_vecs:
+                    pol_sets.append(ref_pol_vecs[bgc])
+                    pol_labels.append(bgc.split("/")[-1])
         else:
             dense_vecs_cb=make_dense_vectors({bgc:mibig_vecs_cb[bgc] for bgc in ref_set})
             dense_vecs_bs=make_dense_vectors({bgc:mibig_vecs_bs[bgc] for bgc in ref_set})
-                                              
+            if args.poly_search:
+                pol_sets=[]
+                pol_labels=[]
+                for bgc in ref_set:
+                    pol_sets.append(mibig_vecs_pol[bgc])
+                    pol_labels.append(bgc)
         
         ax_cb=plot_hclust_dendrogram(dense_vecs_cb)
         ax_bs=plot_hclust_dendrogram(dense_vecs_bs)
+        if args.poly_search:
+            _,_, ax_pol=hierarchical_cluster_sets(pol_sets,pol_labels)
+        else:
+            ax_pol=None
 
         if ax_cb:
             try:
@@ -345,34 +446,69 @@ def main():
                 print(f'failed to save cb_dendrogram figure: {e}')
         else:
             print('no cb ax!')
+
+        if args.poly_search and ax_pol:
+            try:
+                ax_pol.figure.savefig(os.path.join(output_dir,'pol_denrogram.pdf'))
+                
+            except Exception as e:
+                print(f'failed to save cb_dendrogram figure: {e}')
+        else:
+            print('no pol ax!')
         
 
     if vec_check:
-        if ref_dir:
-            rf_vecs_cb={os.path.split(path)[-1]:ref_cb_vecs[path] for path in ref_cb_vecs}|mibig_vecs_cb
-            rf_vecs_bs={os.path.split(path)[-1]:ref_bs_vecs[path] for path in ref_bs_vecs}|mibig_vecs_bs
-            cb_names=[os.path.split(path)[-1] for path in ref_cb_vecs]
-            bs_names=[os.path.split(path)[-1] for path in ref_bs_vecs]
-            chk_cb=analyse_vector_collections(cb_names,rf_vecs_cb)
-            chk_bs=analyse_vector_collections(bs_names,rf_vecs_bs)
-            
-            
 
-        else:
-            chk_cb=analyse_vector_collections(ref_set,mibig_vecs_cb)
-            chk_bs=analyse_vector_collections(ref_set,mibig_vecs_cb)
-
-        print(chk_cb)
-        print(chk_bs)
+        chk_cb=analyse_vector_collections(ref_set,mibig_vecs_cb)
+        chk_bs=analyse_vector_collections(ref_set,mibig_vecs_bs)
+    
+        chk_cb_to_save={'outliers':chk_cb['special_outliers_by_distance'],
+                'other_close_mibig_bgcs':chk_cb['close_other_vectors'],
+                        'max_ref_dist_from_centroid':chk_cb['special_max_distance'],
+                        "classification_threshold":cb_cutoff}
         
+        chk_bs_to_save={'outliers':chk_bs['special_outliers_by_distance'],
+                'other_close_mibig_bgcs':chk_bs['close_other_vectors'],
+                        'max_ref_dist_from_centroid':chk_bs['special_max_distance'],
+                        "classification_threshold":bs_cutoff}
+
+        with open(os.path.join(output_dir,'blast_vec_check.json'),'w') as F:
+            json.dump(chk_cb_to_save,F,indent=4)
+
+        with open(os.path.join(output_dir,'bigslice_vec_check.json'),'w') as F:
+            json.dump(chk_bs_to_save,F,indent=4)
+
+    print("writing hit lists to file...")
+
+    with open(os.path.join(output_dir,'passing_hits_by_k.pkl'),'wb') as F:
+        pickle.dump(passing_hits_by_k,F)
+
+    with open(os.path.join(output_dir,'failing_hits_by_k.pkl'),'wb') as F:
+        pickle.dump(failing_hits_by_k,F)
+    
+    with open(os.path.join(output_dir,'bs_hits.json'),'w') as F:
+        json.dump(list(bs_hits),F,indent=4)
+
+    with open(os.path.join(output_dir,'cb_hits.json'),'w') as F:
+        json.dump(list(cb_hits),F,indent=4)
+
+    with open(os.path.join(output_dir,'ol_hits.json'),'w') as F:
+        json.dump(list(ol_hits),F,indent=4)
+
+    if args.poly_search:
+
+        with open(os.path.join(output_dir,'polymer_hits.json'),'w') as F:
+            json.dump(list(pol_hits),F,indent=4)
+    
+        
+
+        #print(chk_cb)
+        #print(chk_bs)
+
+        
+   #make summary text file
     
 
-    #make venn diagram
-    #write summary text file.
-
-
-
-#from CB parse script
 if __name__ == "__main__":
     
     print('starting DiscERN')

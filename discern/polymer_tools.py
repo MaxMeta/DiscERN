@@ -6,7 +6,9 @@ import re
 from collections import defaultdict, Counter
 import glob
 import numpy as np 
-from collections import Counter
+from scipy.cluster.hierarchy import linkage, dendrogram, fcluster
+from scipy.spatial.distance import pdist, squareform
+import matplotlib.pyplot as plt
 
 def get_contigs(parsed_json):
     """
@@ -47,7 +49,7 @@ def get_domain_structure_for_orfs(orfs,to_parse):
         domain_structure[orf]=module_list
     return domain_structure
 
-def format_orfs(modules,consensus,stachels):
+def format_orfs(modules,consensus,stachels,as6=False):
     """
     Args:
         modules: output from get_domain_structure_for_orfs 
@@ -217,17 +219,30 @@ def format_orfs(modules,consensus,stachels):
                 substrate=consensus[consensus_name]
         
                 if 'X' in substrate:
+                    #print("is X")
                     try:
-                        substrate=stachels[consensus_name]['NRPSPredictor2']['stachelhaus_predictions'][0]
-                    except:
+                        if as6:
+                            #as6 version
+                            substrate=stachels[consensus_name]['NRPSPredictor2']\
+                            ['stachelhaus_predictions'][0]
+                            
+                        else:
+                            #as7/8_version
+                            substrate=stachels[consensus_name]['nrpys']\
+                            ['stachelhaus_matches'][0]['substrates'][0]['short']
+
+                    except Exception as e:
+                        print(f"failed to parse Stachelhaus prediction for {consensus_name} exception :{e}")
                         pass #keep X if it fails for some reason
 
                 if substrate=='pk':
+                    #print("is pk")
                     try:                        
                         
                         substrate=stachels[consensus_name]['minowa_at']['predictions'][0][0]
                         substrate=minowa_dict[substrate]
-                    except:
+                    except Exception as e:
+                        print(f"failed to parse Minowa prediction for {consensus_name} exception :{e}")
                         pass #keep pk if it fails for some reason
             
             if substrate:      
@@ -245,7 +260,7 @@ def format_orfs(modules,consensus,stachels):
     return output
 
 
-def make_predictions(json_file):
+def make_predictions(json_file,as6=False):
     """
     Args:
         json_file: the path to an antismash json file output
@@ -282,7 +297,7 @@ def make_predictions(json_file):
                     orfs=bgc['ordering']
                     to_parse=contigs[contig_name]['antismash.detection.nrps_pks_domains']
                     domain_structure=get_domain_structure_for_orfs(orfs,to_parse)
-                    substrates=format_orfs(domain_structure,consensus,stachels)
+                    substrates=format_orfs(domain_structure,consensus,stachels,as6=as6)
                     
                     if substrates:
                         bgcs[bgc_name]=substrates
@@ -497,7 +512,7 @@ def find_best_f1_threshold(
     best_recall = 0.0
     tp_at_best = 0
     fp_at_best = 0
-    fn_at_best = total_true_positives # Initialize with all TPs as FNs
+    fn_at_best = total_true_positives # Initialise with all TPs as FNs
 
     np_tp_scores = np.array(tp_scores)
     np_fp_scores = np.array(fp_scores)
@@ -566,11 +581,11 @@ def find_best_f1_threshold(
     return best_threshold, max_f1, best_precision, best_recall, tp_at_best, fp_at_best, fn_at_best
 
 
-def make_polymer_dict(antismash_folder,glob_pattern=None,k=5):
+def make_polymer_dict(antismash_folder,glob_pattern=None,k=5,as6=False):
 
     polymer_dict={}
-    
-    if glob_pattern:        
+    if glob_pattern:
+        
         json_files=glob.glob(os.path.join(antismash_folder,glob_pattern))
     else:
         json_files=glob.glob(os.path.join(antismash_folder,"*/*.json"))
@@ -578,17 +593,18 @@ def make_polymer_dict(antismash_folder,glob_pattern=None,k=5):
     for json_file in json_files:
         #print(json_file.split("/")[-1])
         try:
-            d1=make_predictions(json_file)
+            d1=make_predictions(json_file,as6=as6)
             d2=polymer_predictions_to_kmer_vectors(d1,k)
             d3=flatten_polymer_dicts(d2)
-        except exception as e:
-            #print(e)
-            #print(f"no NRPS/PKS found in {json_file}")
+            polymer_dict[json_file]=d3
+        except Exception as e:
+            print(e)
+            print(f"no NRPS/PKS found in {json_file}")
             pass
 
-        polymer_dict[json_file]=d3
+        
 
-    return polymer_dict 
+    return polymer_dict  
 
 
 def get_polymer_matches(polymer_dict,mibig_vecs):
@@ -659,6 +675,22 @@ def print_match_scores(matches,mibig_vecs,polymer_dict):
         print(f"{score/query_len*100} % kmers the query match {bgc}")
         print("~~~~~~~~~~~~~~~~~~~~~")
 
+
+def get_match_stats(matches,mibig_vecs,polymer_dict):
+    match_stats={}
+    for key in matches:
+        bgc=matches[key][1]
+        score=matches[key][0]
+        ref_len=len(mibig_vecs[bgc])
+        pd_k1,contig,bgc_name=key.split("::")
+        pd_k2="::".join([contig,bgc_name])        
+        query_len=len(polymer_dict[pd_k1][pd_k2])
+        ref2query=score/ref_len*100
+        query2ref=score/query_len*100
+        match_stats[key]={"ref_match":bgc, "ref2query":ref2query, "query2ref":query2ref }
+    return match_stats
+        
+
 def find_elements_in_n_of_k_sets(list_of_sets: List[Set[Any]]) -> Dict[int, Set[Any]]:
     """
     Given a list of k sets, finds elements that are present in exactly
@@ -698,135 +730,3 @@ def find_elements_in_n_of_k_sets(list_of_sets: List[Set[Any]]) -> Dict[int, Set[
                 results[count].add(element)
 
     return results
-
-def hierarchical_cluster_sets(list_of_sets: List[Set[Any]],
-                              set_labels: List[str] = None,
-                              linkage_method: str = 'average',
-                              plot_dendrogram: bool = True,
-                              dendrogram_title: str = "Hierarchical Clustering of Sets",
-                              color_threshold: float = None,
-                              truncate_mode: str = None,
-                              p_truncate: int = 0,
-                              leaf_font_size: int = None,
-                              highlight_zero_distance_merges: bool = True,
-                              figsize: Tuple[int, int] = (10, 7),
-                             ) -> Tuple[np.ndarray, np.ndarray]: # Added new arg
-    
-    num_sets = len(list_of_sets)
-
-    if leaf_font_size is None:
-        # Heuristic: Smaller font for many leaves, larger for few. Caps at ~10-12.
-        leaf_font_size = max(4, min(15, int(300 / num_sets))) if num_sets > 15 else 15
-    
-    if num_sets < 2:
-        print("Warning: Need at least two sets to perform clustering.")
-        return None, None
-
-    if set_labels is None:
-        set_labels = [f"Set_{i}" for i in range(num_sets)]
-    elif len(set_labels) != num_sets:
-        raise ValueError("Length of set_labels must match the number of sets.")
-
-    distance_matrix_full = np.zeros((num_sets, num_sets))
-    for i in range(num_sets):
-        for j in range(i + 1, num_sets):
-            dist = set_custom_distance(list_of_sets[i], list_of_sets[j])
-            distance_matrix_full[i, j] = dist
-            distance_matrix_full[j, i] = dist
-
-    condensed_distance_matrix = squareform(distance_matrix_full, checks=False)
-    linkage_matrix = linkage(condensed_distance_matrix, method=linkage_method)
-
-    if plot_dendrogram:
-        plt.figure(figsize=figsize)
-        ddata = dendrogram(
-            linkage_matrix,
-            orientation='right',
-            labels=set_labels,
-            distance_sort='descending',
-            show_leaf_counts=True,
-            color_threshold=color_threshold,
-            truncate_mode=truncate_mode,
-            p=p_truncate,
-        )
-        plt.title(dendrogram_title)
-        plt.xlabel("Distance (1 - Custom Similarity)")
-        plt.ylabel("Set Index / Cluster")
-        plt.grid(axis='x', linestyle='--', alpha=0.7)
-
-        #FIX for zero-distance lines
-        if highlight_zero_distance_merges:
-            ax = plt.gca()
-            for collection in ax.collections: 
-                segments = collection.get_segments() 
-                new_segments = []
-                for segment in segments:
-                    x_coords = [segment[0][0], segment[1][0]]
-                    y_coords = [segment[0][1], segment[1][1]]
-                    is_horizontal_merge_line = y_coords[0] == y_coords[1]
-                    is_zero_distance_line = np.allclose(x_coords, 0.0)
-
-                    if is_horizontal_merge_line and is_zero_distance_line:
-                        pass #
-                    new_segments.append(segment)
-    
-            y_ticks_locs = ax.get_yticks() # Get y-positions of labels
-            y_ticks_labels_str = [label.get_text() for label in ax.get_yticklabels()]
-
-            for i in range(linkage_matrix.shape[0]):
-                idx1, idx2, dist, _ = linkage_matrix[i]
-                if np.isclose(dist, 0.0):
-
-                    y_coord1 = 0
-                    y_coord2 = 0
-
-                    if idx1 < num_sets:
-                        label1_str = set_labels[int(idx1)]
-                        if label1_str in y_ticks_labels_str:
-                             y_coord1 = y_ticks_locs[y_ticks_labels_str.index(label1_str)]
-                    else: 
-
-                        pass 
-
-                    if idx2 < num_sets:
-                        label2_str = set_labels[int(idx2)]
-                        if label2_str in y_ticks_labels_str:
-                            y_coord2 = y_ticks_locs[y_ticks_labels_str.index(label2_str)]
-                    else:
-                        pass
-
-            if np.min(linkage_matrix[:, 2]) < 1e-9: # If there are zero-distance merges
-                current_xlim = ax.get_xlim()
-                if current_xlim[0] >= -1e-9:
-                    ax.set_xlim(-0.01, current_xlim[1] if current_xlim[1] > 0.01 else 0.1)
-                    ax.axvline(0, color='gray', linestyle=':', linewidth=0.8, zorder=0)
-
-
-        plt.tight_layout()
-        #plt.show()
-
-    return condensed_distance_matrix, linkage_matrix, ax
-
-
-def set_custom_distance(set_a: Set[Any], set_b: Set[Any]) -> float:
-    len_a = len(set_a)
-    len_b = len(set_b)
-    intersection_len = len(set_a.intersection(set_b))
-
-    if len_a == 0 and len_b == 0:
-        return 0.0
-    if len_a == 0 or len_b == 0:
-        return 1.0
-
-    min_len = min(len_a, len_b)
-    max_len = max(len_a, len_b)
-
-    if intersection_len == 0:
-        similarity = 0.0
-    else:
-        term1 = intersection_len / min_len
-        term2 = intersection_len / max_len
-        similarity = 0.5 * (term1 + term2)
-    distance = 1.0 - similarity
-    return distance
-

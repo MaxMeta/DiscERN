@@ -4,11 +4,19 @@ from sklearn.metrics import pairwise_distances
 import warnings
 import matplotlib.pyplot as plt
 #matplotlib.use('PDF') 
-from scipy.cluster.hierarchy import dendrogram, linkage
-from scipy.spatial.distance import pdist
-from typing import Dict, Optional, Tuple, Any
+from scipy.cluster.hierarchy import dendrogram, linkage, fcluster, to_tree
+from scipy.spatial.distance import pdist, squareform
+from typing import Dict, Optional, Tuple, Any, List, Union, Set
 import json
 import csv
+
+def reformat_path_2(path):
+  """
+  Concisely reformats a file path using positional splitting.
+  """
+  directory = os.path.dirname(path)
+  filename_parts = os.path.basename(path).split('.')
+  return f"{directory}/knownclusterblast/{'.'.join(filename_parts[:-2])}_c{int(filename_parts[-2][6:])}.txt"
 
 def make_dense_vectors(vectors,default_value=0):
     # Get a sorted list of all unique feature names across all vectors
@@ -109,13 +117,13 @@ def analyse_vector_collections(
         results['warnings'].append("Outlier detection skipped: all vectors (near) identical")
 
 
-    #Part 2: Analyze Other Vectors to find additional candidates for inclusion in ref-vecs
+    #Analyze Other Vectors to find additional candidates for inclusion in ref-vecs
     if other_vecs_exist:
 
         results['other_distances'] = np.array([])
         results['other_inclusion_threshold'] = x * results['special_max_distance']
 
-        # 2b. Calculate Distances of Other Vectors to Special Centroid
+        #Calculate Distances of Other Vectors to Special Centroid
         
         other_distances = pairwise_distances(
             other_vectors, centroid_reshaped, metric=distance_metric
@@ -123,7 +131,7 @@ def analyse_vector_collections(
         results['other_distances'] = other_distances
             
 
-        # 2c. Identify Close Other Vectors
+        #Identify Close Other Vectors
         inclusion_threshold = results['other_inclusion_threshold']
         if inclusion_threshold is not None:
              close_indices = np.where(other_distances <= inclusion_threshold)[0]
@@ -138,7 +146,358 @@ def analyse_vector_collections(
 
     return results
 
+def plot_hclust_dendrogram(
+    vector_dict: Dict[str, np.ndarray],
+    distance_metric: str = 'cosine',
+    linkage_method: str = 'average',
+    color_threshold: Optional[float] = None,
+    figsize: Tuple[int, int] = (10, 7),
+    orientation: str = 'right',
+    leaf_font_size: Optional[int] = None, # Default will be set based on N
+    title: str = 'Hierarchical Clustering Dendrogram',
+    xlabel: Optional[str] = None,
+    ylabel: Optional[str] = None,
+    ax: Optional[plt.Axes] = None
+) -> Tuple[Optional[plt.Axes], Optional[np.ndarray]]:
+    """
+    Performs hierarchical clustering on vectors stored in a dictionary
+    and plots the resulting dendrogram.
 
+    Args:
+        vector_dict: Dictionary where keys are labels (str) and values
+                     are dense NumPy arrays (vectors). All vectors must
+                     have the same dimension.
+        distance_metric: The distance metric to use for calculating pairwise
+                         distances between vectors. See scipy.spatial.distance.pdist
+                         documentation for options (e.g., 'euclidean', 'cosine',
+                         'correlation', 'cityblock', etc.). Defaults to 'cosine'.
+        linkage_method: The linkage algorithm to use. See
+                        scipy.cluster.hierarchy.linkage documentation for options
+                        (e.g., 'average', 'complete', 'single', 'ward').
+                        'ward' requires Euclidean distance. Defaults to 'average'.
+        color_threshold: Distance threshold for coloring clusters. Clusters below
+                         this linkage distance will have distinct colors. If None,
+                         all branches have the default color. Defaults to None.
+        figsize: Tuple representing the figure size (width, height) in inches.
+                 Defaults to (10, 7). Ignored if 'ax' is provided.
+        orientation: The direction to plot the dendrogram ('top', 'bottom',
+                     'left', 'right'). Defaults to 'top'.
+        leaf_font_size: Font size for the leaf labels (dictionary keys).
+                        If None, a default size (e.g., 8 or 10) is used, which
+                        might need manual adjustment if labels overlap.
+        title: Title for the plot. Defaults to 'Hierarchical Clustering Dendrogram'.
+        xlabel: Label for the x-axis. Defaults based on orientation.
+        ylabel: Label for the y-axis. Defaults based on orientation.
+        ax: An existing Matplotlib Axes object to plot on. If None, a new
+            figure and axes are created. Defaults to None.
+
+    Returns:
+        Tuple[Optional[plt.Axes], Optional[np.ndarray]]:
+            - The Matplotlib Axes object containing the plot (or None if input invalid).
+            - The linkage matrix Z generated by scipy.cluster.hierarchy.linkage
+              (or None if input invalid).
+
+    Raises:
+        ValueError: If input dictionary is empty, vectors have inconsistent
+                    dimensions, or linkage/metric combination is invalid (e.g., 'ward'
+                    with 'cosine').
+    """
+    if not vector_dict:
+        warnings.warn("Input vector_dict is empty. Cannot perform clustering.")
+        return None, None
+
+    labels = list(vector_dict.keys())
+    vectors = list(vector_dict.values())
+
+    if not all(isinstance(v, np.ndarray) for v in vectors):
+        raise ValueError("All values in vector_dict must be NumPy arrays.")
+
+    # --- Input Validation ---
+    try:
+        # Stack vectors into a 2D array for pdist
+        vector_matrix = np.vstack(vectors)
+    except ValueError as e:
+        raise ValueError(f"Vectors have inconsistent dimensions: {e}") from e
+
+    if vector_matrix.ndim != 2:
+         # Should not happen with vstack if inputs are 1D arrays, but check anyway
+         raise ValueError("Could not form a 2D matrix from input vectors.")
+
+    n_vectors = vector_matrix.shape[0]
+    if n_vectors < 2:
+        warnings.warn("Need at least 2 vectors for clustering. Plotting skipped.")
+        return None, None
+
+    if linkage_method == 'ward' and distance_metric != 'euclidean':
+        raise ValueError("Ward linkage method requires the 'euclidean' distance metric.")
+
+    # --- Set Defaults ---
+    if leaf_font_size is None:
+        # Heuristic: Smaller font for many leaves, larger for few. Caps at ~10-12.
+        leaf_font_size = max(4, min(10, int(150 / n_vectors))) if n_vectors > 15 else 10
+
+    default_ylabel = f'{distance_metric.capitalize()} Distance'
+    default_xlabel = 'Sample Index / Cluster'
+    if orientation in ('left', 'right'):
+        default_xlabel, default_ylabel = default_ylabel, default_xlabel # Swap
+
+    xlabel = xlabel if xlabel is not None else default_xlabel
+    ylabel = ylabel if ylabel is not None else default_ylabel
+
+    # --- Core Clustering ---
+    try:
+        # Calculate condensed pairwise distance matrix
+        condensed_dist_matrix = pdist(vector_matrix, metric=distance_metric)
+
+        # Perform hierarchical/agglomerative clustering
+        Z = linkage(condensed_dist_matrix, method=linkage_method, metric=distance_metric)
+    except Exception as e:
+        raise RuntimeError(f"Error during distance calculation or linkage: {e}") from e
+
+    # --- Plotting ---
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.figure # Get figure from axes
+
+    try:
+        dendrogram(
+            Z,
+            ax=ax,
+            labels=labels,
+            orientation=orientation,
+            leaf_rotation=90 if orientation in ('top', 'bottom') else 0,  # Rotate labels if plotted top/bottom
+            leaf_font_size=leaf_font_size,
+            color_threshold=color_threshold,
+        )
+        ax.set_title(title, fontsize=plt.rcParams.get('axes.titlesize', 12))
+        ax.set_xlabel(xlabel)
+        ax.set_ylabel(ylabel)
+
+        # Adjust layout - might need manual tweaking depending on label length
+        fig.tight_layout()
+
+    except Exception as e:
+        warnings.warn(f"Error during dendrogram plotting: {e}")
+        # Optionally return None or raise error depending on desired behavior
+        return None
+    
+
+
+    return ax
+
+
+def average_condensed_dms(
+    matrices: List[Union[np.ndarray, list]]
+) -> np.ndarray:
+    """
+    Calculates the element-wise average of a collection of condensed distance matrices.
+
+    A condensed distance matrix is a flat, 1D array representing the upper
+    triangle of a square distance matrix, as produced by functions like
+    `scipy.spatial.distance.pdist`.
+
+    Args:
+        matrices: A list or tuple of 1D NumPy arrays or lists. All matrices
+                  in the collection must have the same length.
+
+    Returns:
+        A 1D NumPy array representing the average condensed distance matrix.
+
+    Raises:
+        ValueError: If the input list is empty, or if the matrices within
+                    the list do not all have the same shape.
+        TypeError: If elements of the list cannot be converted to NumPy arrays.
+    """
+    # 1. Input Validation
+    if not isinstance(matrices, (list, tuple)) or len(matrices) == 0:
+        raise ValueError("Input must be a non-empty list or tuple of distance matrices.")
+
+    try:
+        # Convert all elements to NumPy arrays for consistency and efficiency
+        matrices_np = [np.asarray(m) for m in matrices]
+    except Exception as e:
+        raise TypeError(f"All elements in the input collection must be array-like. Error: {e}")
+
+    first_shape = matrices_np[0].shape
+    # Check that all matrices have the same shape and are 1D
+    if any(m.shape != first_shape for m in matrices_np[1:]):
+        raise ValueError("All distance matrices in the collection must have the same shape.")
+    if len(first_shape) != 1:
+        raise ValueError("Input matrices must be 1D condensed distance matrices.")
+
+    # 2. Averaging using NumPy
+    # Stack the 1D arrays into a 2D array where each row is a matrix.
+    # For N matrices of length K, this creates an (N, K) array.
+    stacked_matrices = np.stack(matrices_np)
+
+    # Calculate the mean along axis 0 (i.e., down the columns). This computes
+    # the average for each position across all matrices.
+    average_matrix = np.mean(stacked_matrices, axis=0)
+
+    return average_matrix
+
+
+def build_newick_string(node, labels):
+    """
+    Recursively builds a Newick string from a SciPy ClusterNode object.
+    This function correctly includes branch lengths.
+
+    Args:
+        node (scipy.cluster.hierarchy.ClusterNode): The current node in the tree.
+        labels (List[str]): The list of leaf labels.
+
+    Returns:
+        str: The Newick formatted string for the subtree rooted at this node.
+    """
+    # If the node is a leaf, return its label. The branch length will be added by the parent call.
+    if node.is_leaf():
+        return labels[node.id]
+    
+    # If the node is not a leaf, it has children. Recursively build their strings.
+    else:
+        # Get the Newick strings for the left and right children
+        left_child_str = build_newick_string(node.get_left(), labels)
+        right_child_str = build_newick_string(node.get_right(), labels)
+        
+        # Calculate the branch length for each child.
+        # It's the distance of the parent node minus the distance of the child node.
+        # For a leaf, its own distance is 0.
+        left_branch_length = node.dist - node.get_left().dist
+        right_branch_length = node.dist - node.get_right().dist
+        
+        # Combine them into the Newick format: (left:len,right:len)
+        return f"({left_child_str}:{left_branch_length:.6f},{right_child_str}:{right_branch_length:.6f})"
+
+def set_custom_distance(set_a: Set[Any], set_b: Set[Any]) -> float:
+    len_a = len(set_a)
+    len_b = len(set_b)
+    intersection_len = len(set_a.intersection(set_b))
+
+    if len_a == 0 and len_b == 0:
+        return 0.0
+    if len_a == 0 or len_b == 0:
+        return 1.0
+
+    min_len = min(len_a, len_b)
+    max_len = max(len_a, len_b)
+
+    if intersection_len == 0:
+        similarity = 0.0
+    else:
+        term1 = intersection_len / min_len
+        term2 = intersection_len / max_len
+        similarity = 0.5 * (term1 + term2)
+    distance = 1.0 - similarity
+    return distance
+
+def hierarchical_cluster_sets(list_of_sets: List[Set[Any]],
+                              set_labels: List[str] = None,
+                              linkage_method: str = 'average',
+                              plot_dendrogram: bool = True,
+                              dendrogram_title: str = "Hierarchical Clustering of Sets",
+                              color_threshold: float = None,
+                              truncate_mode: str = None,
+                              p_truncate: int = 0,
+                              leaf_font_size: int = None,
+                              highlight_zero_distance_merges: bool = True,
+                              figsize: Tuple[int, int] = (10, 7),
+                             ) -> Tuple[np.ndarray, np.ndarray]: # Added new arg
+    
+    num_sets = len(list_of_sets)
+
+    if leaf_font_size is None:
+        # Heuristic: Smaller font for many leaves, larger for few. Caps at ~10-12.
+        leaf_font_size = max(4, min(15, int(300 / num_sets))) if num_sets > 15 else 15
+    
+    if num_sets < 2:
+        print("Warning: Need at least two sets to perform clustering.")
+        return None, None
+
+    if set_labels is None:
+        set_labels = [f"Set_{i}" for i in range(num_sets)]
+    elif len(set_labels) != num_sets:
+        raise ValueError("Length of set_labels must match the number of sets.")
+
+    distance_matrix_full = np.zeros((num_sets, num_sets))
+    for i in range(num_sets):
+        for j in range(i + 1, num_sets):
+            dist = set_custom_distance(list_of_sets[i], list_of_sets[j])
+            distance_matrix_full[i, j] = dist
+            distance_matrix_full[j, i] = dist
+
+    condensed_distance_matrix = squareform(distance_matrix_full, checks=False)
+    linkage_matrix = linkage(condensed_distance_matrix, method=linkage_method)
+
+    if plot_dendrogram:
+        plt.figure(figsize=figsize)
+        ddata = dendrogram(
+            linkage_matrix,
+            orientation='right',
+            labels=set_labels,
+            distance_sort='descending',
+            show_leaf_counts=True,
+            color_threshold=color_threshold,
+            truncate_mode=truncate_mode,
+            p=p_truncate,
+        )
+        plt.title(dendrogram_title)
+        plt.xlabel("Distance (1 - Custom Similarity)")
+        plt.ylabel("Set Index / Cluster")
+        plt.grid(axis='x', linestyle='--', alpha=0.7)
+
+        #FIX for zero-distance lines
+        if highlight_zero_distance_merges:
+            ax = plt.gca()
+            for collection in ax.collections: 
+                segments = collection.get_segments() 
+                new_segments = []
+                for segment in segments:
+                    x_coords = [segment[0][0], segment[1][0]]
+                    y_coords = [segment[0][1], segment[1][1]]
+                    is_horizontal_merge_line = y_coords[0] == y_coords[1]
+                    is_zero_distance_line = np.allclose(x_coords, 0.0)
+
+                    if is_horizontal_merge_line and is_zero_distance_line:
+                        pass #
+                    new_segments.append(segment)
+    
+            y_ticks_locs = ax.get_yticks() # Get y-positions of labels
+            y_ticks_labels_str = [label.get_text() for label in ax.get_yticklabels()]
+
+            for i in range(linkage_matrix.shape[0]):
+                idx1, idx2, dist, _ = linkage_matrix[i]
+                if np.isclose(dist, 0.0):
+
+                    y_coord1 = 0
+                    y_coord2 = 0
+
+                    if idx1 < num_sets:
+                        label1_str = set_labels[int(idx1)]
+                        if label1_str in y_ticks_labels_str:
+                             y_coord1 = y_ticks_locs[y_ticks_labels_str.index(label1_str)]
+                    else: 
+
+                        pass 
+
+                    if idx2 < num_sets:
+                        label2_str = set_labels[int(idx2)]
+                        if label2_str in y_ticks_labels_str:
+                            y_coord2 = y_ticks_locs[y_ticks_labels_str.index(label2_str)]
+                    else:
+                        pass
+
+            if np.min(linkage_matrix[:, 2]) < 1e-9: # If there are zero-distance merges
+                current_xlim = ax.get_xlim()
+                if current_xlim[0] >= -1e-9:
+                    ax.set_xlim(-0.01, current_xlim[1] if current_xlim[1] > 0.01 else 0.1)
+                    ax.axvline(0, color='gray', linestyle=':', linewidth=0.8, zorder=0)
+
+
+        plt.tight_layout()
+        #plt.show()
+
+    return condensed_distance_matrix, linkage_matrix, ax
 
 def plot_hclust_dendrogram(
     vector_dict: Dict[str, np.ndarray],
@@ -275,86 +634,6 @@ def plot_hclust_dendrogram(
 
     return ax, condensed_dist_matrix 
 
-def average_condensed_dms(
-    matrices: List[Union[np.ndarray, list]]
-) -> np.ndarray:
-    """
-    Calculates the element-wise average of a collection of condensed distance matrices.
-
-    A condensed distance matrix is a flat, 1D array representing the upper
-    triangle of a square distance matrix, as produced by functions like
-    `scipy.spatial.distance.pdist`.
-
-    Args:
-        matrices: A list or tuple of 1D NumPy arrays or lists. All matrices
-                  in the collection must have the same length.
-
-    Returns:
-        A 1D NumPy array representing the average condensed distance matrix.
-
-    Raises:
-        ValueError: If the input list is empty, or if the matrices within
-                    the list do not all have the same shape.
-        TypeError: If elements of the list cannot be converted to NumPy arrays.
-    """
-    # 1. Input Validation
-    if not isinstance(matrices, (list, tuple)) or len(matrices) == 0:
-        raise ValueError("Input must be a non-empty list or tuple of distance matrices.")
-
-    try:
-        # Convert all elements to NumPy arrays for consistency and efficiency
-        matrices_np = [np.asarray(m) for m in matrices]
-    except Exception as e:
-        raise TypeError(f"All elements in the input collection must be array-like. Error: {e}")
-
-    first_shape = matrices_np[0].shape
-    # Check that all matrices have the same shape and are 1D
-    if any(m.shape != first_shape for m in matrices_np[1:]):
-        raise ValueError("All distance matrices in the collection must have the same shape.")
-    if len(first_shape) != 1:
-        raise ValueError("Input matrices must be 1D condensed distance matrices.")
-
-    # 2. Averaging using NumPy
-    # Stack the 1D arrays into a 2D array where each row is a matrix.
-    # For N matrices of length K, this creates an (N, K) array.
-    stacked_matrices = np.stack(matrices_np)
-
-    # Calculate the mean along axis 0 (i.e., down the columns). This computes
-    # the average for each position across all matrices.
-    average_matrix = np.mean(stacked_matrices, axis=0)
-
-    return average_matrix
-
-def build_newick_string(node, labels):
-    """
-    Recursively builds a Newick string from a SciPy ClusterNode object.
-    This function correctly includes branch lengths.
-
-    Args:
-        node (scipy.cluster.hierarchy.ClusterNode): The current node in the tree.
-        labels (List[str]): The list of leaf labels.
-
-    Returns:
-        str: The Newick formatted string for the subtree rooted at this node.
-    """
-    # If the node is a leaf, return its label. The branch length will be added by the parent call.
-    if node.is_leaf():
-        return labels[node.id]
-    
-    # If the node is not a leaf, it has children. Recursively build their strings.
-    else:
-        # Get the Newick strings for the left and right children
-        left_child_str = build_newick_string(node.get_left(), labels)
-        right_child_str = build_newick_string(node.get_right(), labels)
-        
-        # Calculate the branch length for each child.
-        # It's the distance of the parent node minus the distance of the child node.
-        # For a leaf, its own distance is 0.
-        left_branch_length = node.dist - node.get_left().dist
-        right_branch_length = node.dist - node.get_right().dist
-        
-        # Combine them into the Newick format: (left:len,right:len)
-        return f"({left_child_str}:{left_branch_length:.6f},{right_child_str}:{right_branch_length:.6f})"
 
 
 def generate_hclust_tree(
@@ -381,7 +660,7 @@ def generate_hclust_tree(
     Raises:
         ValueError: If the number of labels does not match the number of items.
     """
-    #Validation
+    # Validation
     num_items = int(round((1 + np.sqrt(1 + 8 * len(condensed_dm))) / 2))
     if len(labels) != num_items:
         raise ValueError(
@@ -389,7 +668,7 @@ def generate_hclust_tree(
             f"items ({num_items}) inferred from the distance matrix."
         )
 
-    #Perform hierarchical clustering
+    # Perform hierarchical clustering
     print(f"Performing hierarchical clustering using the '{method}' method...")
     linkage_matrix = linkage(condensed_dm, method=method)
 
@@ -420,21 +699,33 @@ def generate_hclust_tree(
         except Exception as e:
             print(f"Error generating or saving PDF: {e}")
     
-    #Convert the linkage matrix to a root ClusterNode object
+    # Convert the linkage matrix to a root ClusterNode object
     print("Converting linkage matrix to a tree object using to_tree()...")
     tree = to_tree(linkage_matrix, rd=False)
 
-    #Build the Newick string from the tree structure using our helper function
+    # Build the Newick string from the tree structure using our helper function
     print("Generating Newick tree string...")
     newick_string = build_newick_string(tree, labels) + ";"
 
-    #Save the Newick string to a file
+    # Save the Newick string to a file
     try:
         with open(output_filepath_newick, 'w') as f:
             f.write(newick_string)
         print(f"Successfully saved Newick tree to: {output_filepath_newick}")
     except IOError as e:
         print(f"Error saving Newick file: {e}")
+
+
+def split_on_second_to_last(path_str):
+    """
+    Splits a path at the second-to-last separator using os.path.split().
+    Returns a tuple (head, tail).
+    """
+    temp_head, tail1 = os.path.split(path_str)
+    head, tail2 = os.path.split(temp_head)
+    tail = os.path.join(tail2, tail1)
+    
+    return head, tail
 
 def get_vecs_for_trees(passing_hits_by_k,min_k=3):
     """
@@ -447,16 +738,7 @@ def get_vecs_for_trees(passing_hits_by_k,min_k=3):
             to_return.extend(passing_hits_by_k[k])
     return to_return
 
-def split_on_second_to_last(path_str):
-    """
-    Splits a path at the second-to-last separator using os.path.split().
-    Returns a tuple (head, tail).
-    """
-    temp_head, tail1 = os.path.split(path_str)
-    head, tail2 = os.path.split(temp_head)
-    tail = os.path.join(tail2, tail1)
-    
-    return head, tail
+
 
 def make_trees(out_folder_path,
                vecs_to_use,
@@ -488,9 +770,10 @@ def make_trees(out_folder_path,
         pol_subset={}
         #pol_subset_labels=[] #just use vecs_to_use + ref
         for vec in vecs_to_use:
+            #print(vec)
             strain,bgc=os.path.split(vec)
             #print(strain,">>",bgc)
-            json_name=os.path.split(strain)[-1][:-3]+'json'
+            json_name=os.path.split(strain)[-1].rsplit(".",1)[0]+'.json'
             pv_key=os.path.join(strain,json_name)
             bgc_number=bgc.split(".")[-2].split('region')[-1].lstrip("0")
             contig_name=bgc.split(".region")[0]
@@ -510,6 +793,7 @@ def make_trees(out_folder_path,
         bs_subset={}
         #pol_subset_labels=[] #just use vecs_to_use + ref
         for vec in vecs_to_use:
+            
             bs_subset[split_on_second_to_last(vec)[-1]]=bs_vecs[vec]
 
         for ref in refs:
@@ -525,7 +809,8 @@ def make_trees(out_folder_path,
         cb_subset={}
         #pol_subset_labels=[] #just use vecs_to_use + ref
         for vec in vecs_to_use:
-            cb_subset[split_on_second_to_last(vec)[-1]]=cb_vecs[vec]
+            cb_key=reformat_path_2(vec)
+            cb_subset[split_on_second_to_last(vec)[-1]]=cb_vecs[cb_key]
 
         for ref in refs:
             cb_subset[ref]=mibig_vecs_cb[ref]
@@ -543,3 +828,6 @@ def make_trees(out_folder_path,
     newick_out_path=os.path.join(out_folder_path,"newick_tree.txt")
     pdf_out_path=os.path.join(out_folder_path,"combined_tree.pdf")
     generate_hclust_tree(mean_matrix,labels,newick_out_path,pdf_out_path)
+    
+    #return(cb_subset)
+

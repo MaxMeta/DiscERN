@@ -362,7 +362,7 @@ def make_counts(gbk_file: str,
         print(f"Error parsing file {gbk_file}: {e}")
         return {}  # Return an empty dictionary on error
 
-    # Convert defaultdict to regular dict (important for JSON serialization)
+    # Convert defaultdict to regular dict (important for JSON serialisation)
     final_counts = {
         ftype: {q: dict(domain_counts) for q, domain_counts in qualifier_counts.items()}
         for ftype, qualifier_counts in counts.items()
@@ -590,7 +590,7 @@ def find_conserved_features(feature_counts_list: List[Dict]) -> Dict:
     if not feature_counts_list:
         return {}
 
-    # 1. Collect all possible feature types, qualifiers, and domain patterns.
+    # Collect all possible feature types, qualifiers, and domain patterns.
     all_feature_types = set()
     all_qualifiers = defaultdict(set)
     all_domains = defaultdict(lambda: defaultdict(set))
@@ -603,10 +603,10 @@ def find_conserved_features(feature_counts_list: List[Dict]) -> Dict:
                 for domain in domain_data:
                     all_domains[feature_type][qualifier].add(domain)
 
-    # 2. Initialize a dictionary to store the minimum counts. Start with infinity.
+    # Initialise a dictionary to store the minimum counts. Start with infinity.
     min_counts = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: float('inf'))))
 
-    # 3. Iterate through the input dictionaries and update the minimum counts.
+    # Iterate through the input dictionaries and update the minimum counts.
     for feature_counts in feature_counts_list:
         for feature_type in all_feature_types:
             if feature_type in feature_counts:
@@ -618,7 +618,7 @@ def find_conserved_features(feature_counts_list: List[Dict]) -> Dict:
                                 min_counts[feature_type][qualifier][domain], count
                             )
 
-    # 4. Filter for conserved features (present in all) AND count > 0 (sparse).
+    # Filter for conserved features (present in all) AND count > 0 (sparse).
     conserved_counts = {}
     for feature_type in all_feature_types:
         conserved_counts[feature_type] = {}
@@ -982,17 +982,18 @@ def find_nearby_vectors_multiple_thresholds(
         from the centroid.
     """
 
-    # 1. Get all unique feature names and create dense centroid vector
+    # Get all unique feature names and create dense centroid vector
     all_keys = sorted(list(set().union(*(v.keys() for v in vectors.values()))))
     dense_centroid = np.array([centroid.get(key, default_value) for key in all_keys])
 
-    # 2. Create dense vectors for all input vectors (do this only once)
+    # Create dense vectors for all input vectors (do this only once)
     dense_vectors = {
         name: np.array([vector.get(key, default_value) for key in all_keys])
         for name, vector in vectors.items()
     }
 
-    # 3. Get the appropriate distance function
+    # Get the appropriate distance function
+    # Only cosine used, keeping others for possible future updates
     distance_functions = {
         "euclidean": euclidean,
         "cosine": cosine,
@@ -1002,12 +1003,12 @@ def find_nearby_vectors_multiple_thresholds(
     }
     distance_func = distance_functions[metric]
 
-    # 4. Initialize the dictionary to store results
+    # Initialise the dictionary to store results
     nearby_vectors_by_threshold: Dict[float, List[str]] = {}
 
     # 5. Iterate through each threshold
     for threshold in thresholds:
-        nearby_vectors_by_threshold[threshold] = []  # Initialize list for this threshold
+        nearby_vectors_by_threshold[threshold] = []  # Initialise list for this threshold
         # 6. Iterate through each vector
         for name, dense_vector in dense_vectors.items():
 
@@ -1063,9 +1064,9 @@ def find_best_score(
     """
     all_names = [key for key in all_vectors]
     best_f = -1.0
-    best_cutoff = -1.0  # Initialize with a value that will be overridden
-    best_precision = -1.0 #initialize
-    best_recall = -1.0 #initialize
+    best_cutoff = -1.0  # Initialise with a value that will be overridden
+    best_precision = -1.0 #initialise
+    best_recall = -1.0 #initialise
 
     for threshold, predicted_positives in threshold_dict.items():
         f_beta, precision, recall = calculate_metrics(
@@ -1119,7 +1120,7 @@ def optimise_distance_threshold(
             maximum distance.
         n_steps: The number of thresholds to test within the range.
         default_value: The default value for missing features in vectors.
-        verbose: If True, print verbose output during the optimization process.
+        verbose: If True, print verbose output during the optimisation process.
         beta: The beta parameter for the F-beta score.
 
     Returns:
@@ -1201,7 +1202,7 @@ def find_hits(
                                                  metric=distance_metric,
                                                  default_value=default_value)
     
-    return(hits[cutoff])
+    return(hits[cutoff],cutoff)
     
 
 ##########################
@@ -1387,7 +1388,8 @@ def change_file_paths(file_paths):
             items_2=name.split("_c")
             num=items_2[-1].split(".")[0]
             new_name=items_2[0]
-            formatted.append(pre_path + new_name+ ".region" + num.zfill(3) + ".gbk")
+            zeros=(3-len(num))*"0"
+            formatted.append(pre_path + new_name+ ".region" + zeros + num + ".gbk")
         else:
             (formatted.append(fp))
     return formatted
@@ -1504,7 +1506,7 @@ def create_venn_new(sets: Tuple[set, ...],
 
     Note: This function currently relies on matplotlib_venn, which primarily
     supports visually distinct Venn diagrams for 2 or 3 sets only. For more
-    than 3 sets, consider alternative visualization libraries or methods
+    than 3 sets, consider alternative visualisation libraries or methods
     (e.g., upsetplot).
 
     Args:
@@ -1565,7 +1567,7 @@ def create_venn_new(sets: Tuple[set, ...],
             # Sticking to modifying existing labels is safer.
             # pass
 
-    # --- Customize Appearance ---
+    # --- Customise Appearance ---
     # Draw circle outlines
     # Pass ax to the circles function
     venn_circles_func(subsets=sets, linestyle='solid', linewidth=0.8, color="black", ax=ax)
@@ -1592,7 +1594,7 @@ def create_venn_new(sets: Tuple[set, ...],
         plt.show()
 
 
-
+# not used in current release, consider using in future, works fine for >= 3 sets
 def create_venn(sets: Tuple[set, ...], labels: Tuple[str, ...], title: str = "", out_path: str = 'venn.pdf') -> None:
     """
     Creates a Venn diagram from sets, labeling each section with its size.
@@ -1650,7 +1652,7 @@ def create_venn(sets: Tuple[set, ...], labels: Tuple[str, ...], title: str = "",
             if text: #handle case where section is empty
                 text.set_text(label)
 
-    # Optional: Customize circle outlines
+    # Optional: Customise circle outlines
     venn_circles_func(subsets=sets, linestyle='solid', linewidth=0.5, color="black")
     plt.title(title)
     
