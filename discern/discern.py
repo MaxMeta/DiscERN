@@ -399,62 +399,6 @@ def main():
                    mibig_vecs_cb,mibig_vecs_pol,
                    use_pol=args.poly_search
                   )
-
-
-    if hclust:
-        if ref_dir:
-            dense_vecs_cb=make_dense_vectors({os.path.split(path)[-1]:ref_cb_vecs[path]\
-                                              for path in ref_cb_vecs})
-            dense_vecs_bs=make_dense_vectors({os.path.split(path)[-1]:ref_bs_vecs[path]\
-                                              for path in ref_bs_vecs})
-            if args.poly_search:
-                pol_sets=[]
-                pol_labels=[]
-                for bgc in ref_pol_vecs:
-                    pol_sets.append(ref_pol_vecs[bgc])
-                    pol_labels.append(bgc.split("/")[-1])
-        else:
-            dense_vecs_cb=make_dense_vectors({bgc:mibig_vecs_cb[bgc] for bgc in ref_set})
-            dense_vecs_bs=make_dense_vectors({bgc:mibig_vecs_bs[bgc] for bgc in ref_set})
-            if args.poly_search:
-                pol_sets=[]
-                pol_labels=[]
-                for bgc in ref_set:
-                    pol_sets.append(mibig_vecs_pol[bgc])
-                    pol_labels.append(bgc)
-        
-        ax_cb=plot_hclust_dendrogram(dense_vecs_cb)
-        ax_bs=plot_hclust_dendrogram(dense_vecs_bs)
-        if args.poly_search:
-            _,_, ax_pol=hierarchical_cluster_sets(pol_sets,pol_labels)
-        else:
-            ax_pol=None
-
-        if ax_cb:
-            try:
-                ax_cb.figure.savefig(os.path.join(output_dir,'cb_denrogram.pdf'))
-                
-            except Exception as e:
-                print(f'failed to save cb_dendrogram figure: {e}')
-        else:
-            print('no cb ax!')
-            
-        if ax_cb:
-            try:
-                ax_bs.figure.savefig(os.path.join(output_dir,'bs_denrogram.pdf'))
-            except Exception as e:
-                print(f'failed to save cb_dendrogram figure: {e}')
-        else:
-            print('no cb ax!')
-
-        if args.poly_search and ax_pol:
-            try:
-                ax_pol.figure.savefig(os.path.join(output_dir,'pol_denrogram.pdf'))
-                
-            except Exception as e:
-                print(f'failed to save cb_dendrogram figure: {e}')
-        else:
-            print('no pol ax!')
         
 
     if vec_check:
