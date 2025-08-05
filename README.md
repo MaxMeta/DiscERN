@@ -1,5 +1,9 @@
 # DiscERN: Discoverer of Evolutionarily Related Natural products
 
+<p align="center">
+  <img alt="DiscERN Logo" src="./assets/logo.png">
+</p>
+
 ## Table of Contents
 *   [Overview](#overview)
 *   [Installation](#install-instructions)    
