@@ -31,33 +31,13 @@ DiscERN is designed to be installed and run within a Conda environment to manage
 
 ### Step 1: Get the DiscERN Source Code
 
-You can get the source code either by cloning the repository with Git or by downloading it as a ZIP file.
-
-#### Option A: Using Git (Recommended)
-This is the recommended method as it makes updating the software straightforward.
 
 ```bash
 git clone <add URL>
 cd DiscERN/
 ```
 
-
-#### Option B: Downloading a ZIP File
-If you do not have Git, you can download the source code directly.
-
-```bash
-# Download the main branch as a ZIP file
-wget <add URL>
-
-# Unzip the archive
-<add name>
-
-# The unzipped folder is typically named 'DiscERN-main'. Navigate into it.
-cd <add name>
-```
-*
-
-**From this point on, all commands should be run from within the `DiscERN/` or `<add name>` directory.**
+**From this point on, all commands should be run from within the `DiscERN/` directory.**
 
 ### Step 2: Download and Set Up BiG-SLiCE Models
 
