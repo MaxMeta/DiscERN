@@ -37,7 +37,7 @@ DiscERN is designed to be installed and run within a Conda environment to manage
 
 
 ```bash
-git clone <add URL>
+git clone https://github.com/MaxMeta/DiscERN.git
 cd DiscERN/
 ```
 
@@ -53,7 +53,10 @@ mkdir bigslice_models
 cd bigslice_models/
 
 # Download the model archive
-wget https://zenodo.org/records/7388921/files/bigslice-models.2022-11-30.tar.gz
+wget https://github.com/medema-group/bigslice/releases/download/v2.0.0rc/bigslice-models.2022-11-30.tar.gz
+
+#check md5. This should be aaabde911ec107d08e5c24f68aaf31d1
+md5 bigslice-models.2022-11-30.tar.gz
 
 # Extract the models and clean up the archive file
 tar -xvzf bigslice-models.2022-11-30.tar.gz
