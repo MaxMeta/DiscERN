@@ -38,7 +38,7 @@ DiscERN is designed to be installed and run within a Conda environment to manage
 
 ```bash
 git clone https://github.com/MaxMeta/DiscERN.git
-cd DiscERN/
+cd DiscERN/discern
 ```
 
 **From this point on, all commands should be run from within the `DiscERN/` directory.**
@@ -48,9 +48,12 @@ cd DiscERN/
 DiscERN uses models from the BiG-SLiCE tool for its `pfam-vec` algorithm. These need to be downloaded and placed in the correct directory.
 
 ```bash
-# Create the directory for the models
+# If you don't have wget, install it:
+conda install wget -y
+
+# Create the directory for the models and change into it
 mkdir bigslice_models
-cd bigslice_models/
+cd bigslice_models
 
 # Download the model archive
 wget https://github.com/medema-group/bigslice/releases/download/v2.0.0rc/bigslice-models.2022-11-30.tar.gz
@@ -63,26 +66,19 @@ tar -xvzf bigslice-models.2022-11-30.tar.gz
 rm bigslice-models.2022-11-30.tar.gz
 
 # Return to the main DiscERN project directory
-cd ..
+cd ../..
 ```
 
 ### Step 3: Create and Activate the Conda Environment
 
 The dependencies are specified in the `environment.yml` file. Use the command appropriate for your operating system to create the environment.
 
-**For Linux:**
-```bash
-conda env create -f environment.yml
-conda activate discern
-```
-
-**For macOS:**
-For macOS users, especially those on Apple Silicon (M1/M2/M3) hardware, specifying the platform is often necessary to ensure all dependencies resolve correctly.
 
 ```bash
 conda env create -f environment.yml --platform osx-64
 conda activate discern
 ```
+
 
 ### Step 4: Install DiscERN
 
@@ -96,7 +92,7 @@ You can verify that the installation was successful by running:
 ```bash
 discern --help
 ```
-This should display the help menu with all available command-line options. You are now ready to use DiscERN.
+This might take a while the first time you run it, but should display the help menu with all available command-line options. You are now ready to use DiscERN.
     
 ## How DiscERN Works
 
