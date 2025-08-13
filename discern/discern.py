@@ -385,7 +385,7 @@ def main():
         to_smash=glob.glob(os.path.join(output_dir,'*_hits_k*.gbk'))
         for gbk_file in to_smash:
             out_name=gbk_file.split(".gbk")[0]
-            resmash_hits(ogbk_file, output_dir=os.path.join(output_dir,out_name),num_cpus=num_cpus)
+            resmash_hits(gbk_file, output_dir=os.path.join(output_dir,out_name),num_cpus=num_cpus)
 
     if hclust:
 
