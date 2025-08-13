@@ -113,7 +113,7 @@ This should display the help menu with all available command-line options.  You 
 
 Verify antismash installed correctly. This should display the help menu with all available command-line options.
 ```bash
-discern --help
+antismash --help
 ```
 
 
@@ -177,35 +177,95 @@ discern -a <antismash_directory> -o <output_directory> -r <reference_bgcs> [OPTI
 *   `--vec_check`: Perform a check on the reference BGC collection for internal consistency and identify other MIBiG BGCs that are closely related. (Default: True).
 *   `--hclust`: Generate hierarchical clustering dendrograms and a combined Newick tree for high-confidence hits. (Default: True).
 
+
+---
+
+### Input Directory Structure
+
+The `--antismash_dir` (or `-a`) flag should point to a top-level directory that contains 
+the output folders from your various antiSMASH runs. Each subdirectory should correspond 
+to the complete antiSMASH output for a single genome.
+
+The antiSMASH runs need to have been completed with known cluster blast activated using 
+the flag ```--cb-knownclusters``` 
+Make sure you enable this when generating antismash outputs for use with DiscERN
+
+DiscERN will automatically scan these subdirectories to find the necessary files (e.g., `.gbk`, `.json`, and `knownclusterblast/` files) for its analysis.
+
+Here is an example of a correctly formatted input directory:
+
+```bash
+# Your main input directory
+antismash_runs/
+│
+├── Streptomyces_coelicolor_A3(2)/
+│   ├── knownclusterblast/
+│   │   ├── NC_003888.3_c1.txt
+│   │   ├── NC_003888.3_c2.txt
+│   │   └── ...
+│   ├── index.html
+│   ├── NC_003888.3.gbk
+│   ├── NC_003888.3.json
+│   ├── NC_003888.3.region001.gbk
+│   ├── NC_003888.3.region002.gbk
+│   └── ... (and all other antiSMASH output files)
+│
+├── Streptomyces_griseus_DSM_40236/
+│   ├── knownclusterblast/
+│   │   └── ...
+│   ├── index.html
+│   ├── CP002472.1.gbk
+│   ├── CP002472.1.json
+│   ├── CP002472.1.region001.gbk
+│   └── ... (all antiSMASH files for this genome)
+│
+└── Nocardia_brasiliensis_ATCC_700358/
+    ├── knownclusterblast/
+    │   └── ...
+    ├── index.html
+    ├── CP003885.1.gbk
+    ├── CP003885.1.json
+    ├── CP003885.1.region001.gbk
+    └── ... (all antiSMASH files for this genome)
+```
 ## Example Walkthrough
 Let's find new members of the calcium-dependent lipopeptide (CDA) family from a set of actinomycete genomes that have already been run through antiSMASH.
 
 **1. Prepare Inputs**
-*   Create a directory named `antismash_outputs/` and place all your antiSMASH result folders inside it.
-*   Create a file named `cda_references.txt` and add the MIBiG IDs for known CDAs, one per line:
-    ```
-    BGC0000306
-    BGC0000330
-    BGC0000332
-    BGC0001099
-    ```
 
-**2. Run DiscERN**
-Open your terminal and execute the following command. Since CDAs are NRPSs, we will use the `--poly_search` flag.
-
+In this example, you will download some test data and analyse this. 
+First, make an input directory, then change into this directory and download the example data
+I this example, we will make the input and output directories in your home dir.
+You can change this if you want.
 ```bash
-discern \
-    -a antismash_outputs/ \
-    -o cda_discovery_run/ \
-    -r cda_references.txt \
-    -p \
-    -c 8 
+mkdir ~/discern_test/
+cd ~/discern_test/
+wget <add_url>
 ```
+
+Unzip the example data folder and remove the compressed file
+```bash
+tar -xvzf <file_name>
+rm <file_name>
+```
+
+Run DiscERN with a string specifying the CDA family as reference BGCs.  
+Since CDAs are NRPSs, we will use the `--poly_search` flag.
+We will also enable antiSMASH analysis of the compiled results
+```bash
+discern -a ~/discern_test/inputs \
+-o ~/discern_test/cda_output \
+-r "BGC0000315 BGC0001370 BGC0001968 BGC0001984 BGC0000291 BGC0000336 BGC0000379 BGC0000354 BGC0001448 BGC0002430 BGC0000439"  \
+--poly_search
+-s
+```
+
+
 
 **3. Analyze the Results**
 Once the run is complete, navigate to the `cda_discovery_run/` directory.
 
-*   **Prioritize Hits**: Start by examining the `filtered_hits_k4.gbk` and `filtered_hits_k3.gbk` files. These contain the BGCs that were identified by 4 and 3 algorithms, respectively, and which also possess the core conserved domains of the CDA family. These are your most promising candidates.
+*   **Prioritize Hits**: Start by examining the antiSMASH outputs in the directories called `filtered_hits_k4.gbk` and `filtered_hits_k3.gbk` files. These contain the BGCs that were identified by 4 and 3 algorithms, respectively, and which also possess the core conserved domains of the CDA family. These are your most promising candidates.
 *   **Visualize Relationships**: Open the `combined_tree.pdf` and `pol_denrogram.pdf` files. These dendrograms show how your new hits (labeled by their genome and region number) cluster with the known CDA references from MIBiG. Outliers or distinct sub-clusters may represent particularly novel structural variants. You can use the `newick_tree.txt` file with a viewer like iTOL for more advanced visualization.
 *   **Refine your Family (Optional)**: Open `blast_vec_check.json` and `bigslice_vec_check.json`. The `outliers` field will tell you if any of your reference BGCs are very different from the others. The `other_close_mibig_bgcs` field may reveal other MIBiG BGCs that you might want to consider adding to your reference set for future runs.
 
@@ -217,6 +277,7 @@ The most important outputs are the combined GenBank files containing the identif
 
 *   `filtered_hits_k{k}.gbk`: These files contain BGCs that passed the conserved domain filter. The `{k}` indicates the number of algorithms that supported the hit. **These are your highest-priority targets.** A higher `k` value corresponds to higher confidence. Based on our benchmarking, `k≥3` yields very high precision (>95%).
 *   `unfiltered_hits_k{k}.gbk`: These files contain BGCs that were identified but are missing one or more of the core domains found in the reference family. These could be interesting but more divergent family members, or simply fragmented BGCs.
+*   if antiSMASH analysis of compiled results is enabled, you will also see directories with the same name as the gbk files. These contain antiSMASH outputs 
 
 ### Analysis and Visualization Files
 *   `combined_tree.pdf` & `newick_tree.txt`: A hierarchical clustering tree created by averaging the distance metrics from all three underlying vector types (Pfam, BLAST, and polymer k-mers). Use this to visualize the overall relatedness of your high-confidence hits (`k >= min_k`) and the references.
