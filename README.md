@@ -47,38 +47,54 @@ cd DiscERN/discern
 
 DiscERN uses models from the BiG-SLiCE tool for its `pfam-vec` algorithm. These need to be downloaded and placed in the correct directory.
 
+If you don't have wget, install it:
 ```bash
-# If you don't have wget, install it:
 conda install wget -y
+```
 
-# Create the directory for the models and change into it
+Create the directory for the models and change into it
+```bash
 mkdir bigslice_models
 cd bigslice_models
+```
 
-# Download the model archive
+Download the model archive
+```bash
 wget https://github.com/medema-group/bigslice/releases/download/v2.0.0rc/bigslice-models.2022-11-30.tar.gz
-
-#check md5. This should be aaabde911ec107d08e5c24f68aaf31d1
+```
+Check md5. This should be ```aaabde911ec107d08e5c24f68aaf31d1```
+```bash
 md5 bigslice-models.2022-11-30.tar.gz
+```
 
-# Extract the models and clean up the archive file
+Extract the models and clean up the archive file
+```bash
 tar -xvzf bigslice-models.2022-11-30.tar.gz
 rm bigslice-models.2022-11-30.tar.gz
+```
 
-# Return to the main DiscERN project directory
+Return to the main DiscERN project directory
+```
 cd ../..
 ```
 
 ### Step 3: Create and Activate the Conda Environment
 
-The dependencies are specified in the `environment.yml` file. Use the command appropriate for your operating system to create the environment.
 
-
+For Linux use the following command
 ```bash
-conda env create -f environment.yml --platform osx-64
-conda activate discern
+conda create -n discern antismash==8.0.2 
 ```
 
+For Mac osX use the following command
+```bash
+conda create -n discern antismash==8.0.2 --platform osx-64
+```
+
+Activate your environment
+```bash
+conda activate discern
+```
 
 ### Step 4: Install DiscERN
 
@@ -92,8 +108,15 @@ You can verify that the installation was successful by running:
 ```bash
 discern --help
 ```
-This might take a while the first time you run it, but should display the help menu with all available command-line options. You are now ready to use DiscERN.
-    
+This should display the help menu with all available command-line options.  You are now ready to use DiscERN. It might take a few minutes the first time you run it
+
+
+Verify antismash installed correctly. This should display the help menu with all available command-line options.
+```bash
+discern --help
+```
+
+
 ## How DiscERN Works
 
 ### Core Algorithmic Approaches
