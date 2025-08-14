@@ -171,7 +171,7 @@ discern -a <antismash_directory> -o <output_directory> -r <reference_bgcs> [OPTI
 *   `-c`, `--num_cpus`: Number of CPUs to use for parallel processing. (Default: all available physical cores).
 *   `-p`, `--poly_search`: Activates the "Structural K-mer Intersection" method. This is highly recommended for families of NRPS, PKS, or hybrid NRPS/PKS BGCs, especially those with 5 or more modules.
 *   `-u`, `--reuse`: Path to a previous DiscERN output directory. If specified, DiscERN will reuse the intermediate vector and count files (`bs_vecs.json`, `cb_vecs.json`, etc.) from that run, saving significant computation time. The `--antismash_dir` must point to the same input directory used for the original run.
-*   `-s`, `--resmash`: If specified, DiscERN will automatically run antiSMASH on the final combined hit `.gbk` files. This is useful for re-annotating the hits with Cluster-BLAST information relative to each other.
+*   `-s`, `--resmash`: If specified, DiscERN will automatically run antiSMASH on the final combined hit `.gbk` files. 
 *   `--as6`: Flag to indicate that the antiSMASH outputs were generated with antiSMASH version 6. This adjusts the parsing logic for polymer predictions.
 
 #### **Advanced Options:**
