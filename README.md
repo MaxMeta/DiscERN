@@ -239,24 +239,21 @@ Let's find new members of the calcium-dependent lipopeptide (CDA) family from a 
 **1. Prepare Inputs**
 
 In this example, you will download some test data and analyse this. 
-First, make an input directory, then change into this directory and download the example data
-I this example, we will make the input and output directories in your home dir.
-You can change this if you want.
 ```bash
-mkdir ~/discern_test/
-cd ~/discern_test/
-wget <add_url>
+cd ~
+wget https://zenodo.org/records/16872477/files/discern_test.tar.gz 
 ```
 
 Unzip the example data folder and remove the compressed file
 ```bash
-tar -xvzf <file_name>
-rm <file_name>
+tar -xvzf discern_test.tar.gz 
+rm discern_test.tar.gz 
 ```
 
 Run DiscERN with a string specifying the CDA family as reference BGCs.  
 Since CDAs are NRPSs, we will use the `--poly_search` flag.
 We will also enable antiSMASH analysis of the compiled results
+
 ```bash
 discern -a ~/discern_test/inputs \
 -o ~/discern_test/cda_output \
@@ -265,20 +262,26 @@ discern -a ~/discern_test/inputs \
 -s
 ```
 
+Now we will use the glycopeptide family as reference BGC.
+We can reuse the processed data from our first run with CDAs by using `-u` 
+This will save a lot of computation. Especially with large inputs.
+
+```bash
+discern -a ~/discern_test/inputs \
+-o ~/discern_test/glyco_output \
+-u ~/discern_test/cda_output \
+-r "BGC0000289 BGC0000290 BGC0000311 BGC0000322 BGC0000326 BGC0000418 BGC0000419 BGC0000440 BGC0000441 BGC0000455 BGC0001178 BGC0001459 BGC0001460 BGC0001461 BGC0001462 BGC0001635 BGC0001955 BGC0002314 BGC0002344 BGC0002637 BGC0002638 BGC0002702 BGC0002992 BGC0003168"  \
+--poly_search
+-s
+```
 
 
-**3. Analyze the Results**
-Once the run is complete, navigate to the `cda_discovery_run/` directory.
-
-*   **Prioritize Hits**: Start by examining the antiSMASH outputs in the directories called `filtered_hits_k4.gbk` and `filtered_hits_k3.gbk` files. These contain the BGCs that were identified by 4 and 3 algorithms, respectively, and which also possess the core conserved domains of the CDA family. These are your most promising candidates.
-*   **Visualize Relationships**: Open the `combined_tree.pdf` and `pol_denrogram.pdf` files. These dendrograms show how your new hits (labeled by their genome and region number) cluster with the known CDA references from MIBiG. Outliers or distinct sub-clusters may represent particularly novel structural variants. You can use the `newick_tree.txt` file with a viewer like iTOL for more advanced visualization.
-*   **Refine your Family (Optional)**: Open `blast_vec_check.json` and `bigslice_vec_check.json`. The `outliers` field will tell you if any of your reference BGCs are very different from the others. The `other_close_mibig_bgcs` field may reveal other MIBiG BGCs that you might want to consider adding to your reference set for future runs.
 
 ## Interpreting the Output
 DiscERN creates a structured output directory to facilitate hit prioritization.
 
 ### Primary Hit Files
-The most important outputs are the combined GenBank files containing the identified BGCs.
+The most important outputs are the combined GenBank files containing the identified BGCs and the corresponding antiSMASH output folders (if this option was enabled)
 
 *   `filtered_hits_k{k}.gbk`: These files contain BGCs that passed the conserved domain filter. The `{k}` indicates the number of algorithms that supported the hit. **These are your highest-priority targets.** A higher `k` value corresponds to higher confidence. Based on our benchmarking, `k≥3` yields very high precision (>95%).
 *   `unfiltered_hits_k{k}.gbk`: These files contain BGCs that were identified but are missing one or more of the core domains found in the reference family. These could be interesting but more divergent family members, or simply fragmented BGCs.
