@@ -98,7 +98,7 @@ conda activate discern
 
 Download the antiSMASH databases, this will take a few minutes
 ```bash
-antismash-download-databases
+download-antismash-databases
 ```
 
 ### Step 4: Install DiscERN
