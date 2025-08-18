@@ -5,6 +5,7 @@ import pickle
 from .funcs_2 import *         
 from .vector_tools import * 
 from .polymer_tools import *
+from .low_n_mode import run_low_n_search
 
 #should work with AntiSMASH < 7 if corresponding mibig ref files provided ... todo
 
@@ -114,6 +115,18 @@ def main():
                         default=3, 
                         help="minimum algorithm support for hclust"
     )
+    
+    parser.add_argument(
+        "-l",
+        "--low_n_mode",
+        action='store_true',
+        default=False,
+        help="""Use a special 'top-hit consensus' mode for BGC families with few (e.g., <=3 )
+             known members. This mode identifies hits where BOTH the top BLAST hit and
+             the top predicted polymer structure hit are in the reference family.
+             Requires '--poly_search' to be active and only works with MIBiG references."""
+    )
+    
     args=parser.parse_args()
 
     antismash_dir=args.antismash_dir
@@ -127,9 +140,18 @@ def main():
     hclust=args.hclust
     vec_check=args.vec_check
     as6=args.as6
+    low_n=args.low_n_mode
+    
+    if low_n:
+        if not args.poly_search:
+            print("Error: --low_n_mode requires --poly_search to be activated.")
+            return # Exit
+        if os.path.isdir(args.reference_bgcs):
+            print("Error: --low_n_mode only works with MIBiG references (provide as a list or file), not external reference directories.")
+            return # Exit
 
     if not 1<=args.min_k<=4:
-        print("min_k must be between 1-4. Setting to default value")
+        print("min_k must be between 1-4. Setting to default value of 3")
         args.min_k=3
         
     if args.clusterblast_cutoff:
@@ -258,13 +280,12 @@ def main():
         mibig_vecs_cb.update(ref_cb_vecs)
         mibig_vecs_pol.update(ref_pol_vecs)
         
-    if reuse:
+    if reuse and not low_n:
         print("loading previously constructed big-slice vectors from file")
         with open(os.path.join(reuse,"bs_vecs.json")) as F:
             bs_vecs=json.load(F)
 
-    else:
-
+    elif not low_n:       
         print("making big-slice vectors")
         bs_vecs = make_sparse_dict(antismash_dir,db_dir)
         with open(os.path.join(output_dir,"bs_vecs.json"),'w') as F:
@@ -293,6 +314,7 @@ def main():
         all_counts=all_counts_rf
         with open(os.path.join(output_dir,"feature_counts.json"),'w') as F:
             json.dump(all_counts,F,indent=4)
+            
     if reuse:
         print("loading previously constructed polymer dict from file")
         with open(os.path.join(reuse,"poly_dict.pkl"),'rb') as F:
@@ -307,16 +329,30 @@ def main():
 
     print('finding conserved features from mibig vecs')
     conserved_features=flatten_nested_dict(analyse_mibig_set(ref_set, mibig_counts))
-    #print(conserved_features)
+    #print(conserved_features)   
+
+    
+    if low_n:
+        # Run the special low-N mode and then finish.
+        run_low_n_search(
+            cb_vecs=cb_vecs,
+            poly_dict=poly_dict,
+            mibig_vecs_pol=mibig_vecs_pol,
+            ref_set=ref_set,
+            output_dir=output_dir
+        )
+        print("DiscERN Low-N Mode finished.")
+        if resmash:
+            print("running antismash analysis on low N hits")
+            gbk_file=os.path.join(output_dir,"low_n_mode_hits.gbk")
+            resmash_hits(gbk_file, output_dir=os.path.join(output_dir,"low_n_smash_output"),num_cpus=num_cpus)
+        return
     
     print('finding bs vec hits')
-    
-
     bs_hits, bs_cutoff = find_hits(bs_vecs,mibig_vecs_bs,ref_set,beta=beta,cutoff=cbs)
        
     print('finding cb vec hits')    
- 
-    cb_hits, cb_cutoff = find_hits(cb_vecs,mibig_vecs_cb,ref_set,beta=beta,cutoff=ccb) 
+    cb_hits, cb_cutoff = find_hits(cb_vecs,mibig_vecs_cb,ref_set,beta=beta,cutoff=ccb)
 
     if args.poly_search:
         print('finding polymer matches')    
