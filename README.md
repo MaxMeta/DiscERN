@@ -258,7 +258,7 @@ We will also enable antiSMASH analysis of the compiled results
 discern -a ~/discern_test/inputs \
 -o ~/discern_test/cda_output \
 -r "BGC0000315 BGC0001370 BGC0001968 BGC0001984 BGC0000291 BGC0000336 BGC0000379 BGC0000354 BGC0001448 BGC0002430 BGC0000439"  \
---poly_search
+--poly_search \
 -s
 ```
 
