@@ -241,7 +241,7 @@ Let's find new members of the calcium-dependent lipopeptide (CDA) family from a 
 In this example, you will download some test data and analyse this. 
 ```bash
 cd ~
-wget https://zenodo.org/records/16872477/files/discern_test.tar.gz 
+wget https://zenodo.org/records/16899260/files/discern_test.tar.gz
 ```
 
 Unzip the example data folder and remove the compressed file
@@ -258,7 +258,7 @@ We will also enable antiSMASH analysis of the compiled results
 discern -a ~/discern_test/inputs \
 -o ~/discern_test/cda_output \
 -r "BGC0000315 BGC0001370 BGC0001968 BGC0001984 BGC0000291 BGC0000336 BGC0000379 BGC0000354 BGC0001448 BGC0002430 BGC0000439"  \
---poly_search
+--poly_search \
 -s
 ```
 
@@ -271,7 +271,7 @@ discern -a ~/discern_test/inputs \
 -o ~/discern_test/glyco_output \
 -u ~/discern_test/cda_output \
 -r "BGC0000289 BGC0000290 BGC0000311 BGC0000322 BGC0000326 BGC0000418 BGC0000419 BGC0000440 BGC0000441 BGC0000455 BGC0001178 BGC0001459 BGC0001460 BGC0001461 BGC0001462 BGC0001635 BGC0001955 BGC0002314 BGC0002344 BGC0002637 BGC0002638 BGC0002702 BGC0002992 BGC0003168"  \
---poly_search
+--poly_search \
 -s
 ```
 
