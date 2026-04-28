@@ -241,7 +241,7 @@ Let's find new members of the calcium-dependent lipopeptide (CDA) family from a 
 In this example, you will download some test data and analyse this. 
 ```bash
 cd ~
-https://zenodo.org/records/16899260/files/discern_test.tar.gz
+wget https://zenodo.org/records/16899260/files/discern_test.tar.gz
 ```
 
 Unzip the example data folder and remove the compressed file
