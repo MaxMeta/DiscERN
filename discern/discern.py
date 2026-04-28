@@ -36,27 +36,31 @@ def main():
 
     parser = argparse.ArgumentParser(description="arguments for main script")
     
-    parser.add_argument("-a", "--antismash_dir", 
+    parser.add_argument("-a", "--antismash_dir",
+                        required=True,
                         help="Base directory containing antismash outputs."
     )
 
-    parser.add_argument("-o", "--output_dir", 
+    parser.add_argument("-o", "--output_dir",
+                        required=True,
                         default=None, help="path for output folder to create"
     )
-    
-    parser.add_argument("-c", "--num_cpus", 
-                        type=int, 
+
+    parser.add_argument("-c", "--num_cpus",
+                        type=int,
                         default=0,
                         help="Number of CPUs (default: all available physical cores)."
     )
 
-    parser.add_argument("-r", "--reference_bgcs", 
-                        default=None, 
+    parser.add_argument("-r", "--reference_bgcs",
+                        required=True,
+                        default=None,
                         help="reference bgcs defining family to be expanded"
     )
 
-    parser.add_argument("-b", "--beta", 
-                        default=None, 
+    parser.add_argument("-b", "--beta",
+                        type=float,
+                        default=None,
                         help="use f-beta score instead of mcc, define value of beta here"
     )
 
@@ -111,8 +115,9 @@ def main():
         help="Use antiSMASH 6 outputs"
     ) 
     
-    parser.add_argument("-k", "--min_k", 
-                        default=3, 
+    parser.add_argument("-k", "--min_k",
+                        type=int,
+                        default=3,
                         help="minimum algorithm support for hclust"
     )
     
@@ -168,6 +173,17 @@ def main():
     if not os.path.isdir(output_dir):
         os.mkdir(output_dir)
 
+    # Parse mibig_exclude once up front. The 'self' sentinel is resolved later,
+    # after ref_set has been parsed.
+    if mibig_exclude:
+        if os.path.isfile(mibig_exclude):
+            with open(mibig_exclude) as F:
+                mibig_exclude = {line.strip() for line in F if line.strip()}
+        elif mibig_exclude == 'self':
+            pass
+        else:
+            mibig_exclude = set(mibig_exclude.split())
+
     if os.path.isdir(ref_set):
         
         ref_set_bs=glob.glob(os.path.join(ref_set,"*.gbk"))     
@@ -179,7 +195,7 @@ def main():
             print("number of referenceknownclusterblast text files and gbk files not equal")
             return 
             
-        if args.use_pol:
+        if args.poly_search:
             if not len(ref_set_bs)==len(ref_set_pol):
                 print("number of json text files and gbk files not equal")
                 return
@@ -202,7 +218,7 @@ def main():
                         for key in ref_pol_vecs}
         ref_pol_vecs=ref_pol_vecs_rf
         
-        if mibig_exclude:
+        if mibig_exclude and mibig_exclude != 'self':
             for key in ref_cb_vecs:#delete  excluded BGCs from ref cb vecs
                 for bgc in mibig_exclude:
                     if bgc in ref_cb_vecs[key]:
@@ -245,28 +261,19 @@ def main():
         
 
     if mibig_exclude:
-        if os.path.isfile(mibig_exclude):
-            lines=set({})
-            with open(mibig_exclude) as F:
-                for line in F:
-                    if line.strip():
-                        lines.add(line.strip())
-            mibig_exclude=lines
-        
-        elif mibig_exclude=='self':
+        # Resolve the deferred 'self' sentinel now that ref_set is parsed.
+        if mibig_exclude == 'self':
             if not ref_dir:
-                mibig_exclude=ref_set
+                mibig_exclude = set(ref_set)
             else:
                 print("ignoring mibig_exclude=self argument as this is not compatible with external ref files")
-            #print(mibig_exclude)
-        else:
-            mibig_exclude=mibig_exclude.split()
-            
+                mibig_exclude = set()
+
+    if mibig_exclude:
         new_cb={key:mibig_vecs_cb[key] for key in mibig_vecs_cb if not key in mibig_exclude}
         for key in new_cb:
             for bgc in mibig_exclude:
                 if bgc in new_cb[key]:
-                    #print(bgc,new_cb[key][bgc])
                     del new_cb[key][bgc]
         new_bs={key:mibig_vecs_bs[key] for key in mibig_vecs_bs if not key in mibig_exclude}
         new_pol={key:mibig_vecs_pol[key] for key in mibig_vecs_pol if not key in mibig_exclude}
