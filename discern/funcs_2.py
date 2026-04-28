@@ -98,8 +98,8 @@ def extract_features(bgcs, hmmdb_folder, top_k=3, num_cpus=0):
             for hit in top_hits:
                 if hit.best_domain.score < top_hits.domT:
                     continue
-                bgc_id, cds_id = list(map(int, hit.name.decode().split("-")))
-                hmm_name = top_hits.query_accession.decode()
+                bgc_id, cds_id = list(map(int, hit.name.split("-")))
+                hmm_name = top_hits.query.accession
                 alignment = hit.best_domain.alignment
                 biosyn_hits.append((bgc_id, hmm_name, 255))
                 
@@ -130,8 +130,8 @@ def extract_features(bgcs, hmmdb_folder, top_k=3, num_cpus=0):
                 for hit in top_hits:
                     if hit.best_domain.score < top_hits.domT:
                         continue
-                    hsp_name = hit.name.decode()
-                    hmm_name = top_hits.query_name.decode()
+                    hsp_name = hit.name
+                    hmm_name = top_hits.query.name
                     score = hit.best_domain.score
                     if hsp_name not in parsed:
                         parsed[hsp_name] = {}
