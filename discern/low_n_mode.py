@@ -36,7 +36,6 @@ def run_low_n_search(
         # Convert the clusterblast text file path to a standard gbk path
         gbk_path = change_file_paths([cb_path])[0]
         top_blast_hits[gbk_path] = _find_top_blast_hit(blast_vector)
-        print(cb_path,">>",top_blast_hits[gbk_path])
 
     #Find the top polymer hit for every query BGC ---
     print("Determining top polymer hit for all query BGCs...")
@@ -46,18 +45,15 @@ def run_low_n_search(
     for polymer_key, (score, top_hit) in top_polymer_matches_raw.items():
         gbk_path = polymer_dict_key_to_gbk_path(polymer_key)
         top_polymer_hits[gbk_path] = top_hit
-        #print("-->",top_polymer_hits[gbk_path])
 
     #Find the intersection of hits satisfying both criteria
     print("Identifying BGCs with consensus top hits in the reference family...")
-    
+
     # Find all BGCs whose top BLAST hit is in the reference set
     blast_hit_candidates = {gbk for gbk, top_hit in top_blast_hits.items() if top_hit in ref_set}
-    print(blast_hit_candidates)
-    
+
     # Find all BGCs whose top Polymer hit is in the reference set
     polymer_hit_candidates = {gbk for gbk, top_hit in top_polymer_hits.items() if top_hit in ref_set}
-    print(polymer_hit_candidates)
     
     # The final hits are the intersection of these two sets
     final_hits = list(blast_hit_candidates.intersection(polymer_hit_candidates))

@@ -46,7 +46,7 @@ setuptools.setup(
                       "tqdm",
                       "biopython",
                       "antismash",
-                      "pyhmmer==0.10.7"
+                      "pyhmmer>=0.11"
                      ],
 
     entry_points={
