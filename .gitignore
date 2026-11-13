@@ -3,4 +3,6 @@ discern/bigslice_models/
 discern/.ipynb_checkpoints
 DiscERN.egg-info
 discern/__pycache__ 
+__pycache__/
+.pytest_cache/
 
