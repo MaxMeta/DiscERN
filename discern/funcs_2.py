@@ -753,6 +753,28 @@ def analyse_genbank_set(gbk_set: Union[List[str], Set[str]],
     return find_conserved_flat_features(feature_counts_list)
 
 
+def conserved_features_for_references(mibig_refs, mibig_counts, custom_gbk_paths, feature_dict):
+    """
+    Conserved features across a mixed reference set: bundled counts for the
+    MIBiG references plus make_counts on the custom reference GenBank files.
+    Counts are flattened before comparison, so make_counts' simplified form
+    (one feature/qualifier combination) is handled.
+
+    Returns:
+        (flat {feature: minimum count}, sorted MIBiG references without bundled counts)
+    """
+    counts_list = []
+    missing = []
+    for bgc in sorted(mibig_refs):
+        if bgc in mibig_counts:
+            counts_list.append(flatten_nested_dict(mibig_counts[bgc]))
+        else:
+            missing.append(bgc)
+    for path in custom_gbk_paths:
+        counts_list.append(flatten_nested_dict(make_counts(path, feature_dict)))
+    return find_conserved_flat_features(counts_list), missing
+
+
 def find_conserved_flat_features(flat_counts_list: List[Dict[str, int]]) -> Dict[str, int]:
     """
     Features present (count > 0) in every flat {feature: count} dict, with their
@@ -1219,6 +1241,19 @@ def find_index_of_first_max(numbers: List[int]) -> int:
 
     return max_index
 
+def make_cb_lists_drop_self_by_id(d, reference_bgcs):
+    """
+    Ranked hit lists (best first) for each reference, without the reference's
+    own ID. Used with --cb_source diamond, where every reference (MIBiG or
+    custom) is a subject. make_cb_lists instead drops each reference's first
+    hit, which removes a real hit when a reference has no self dimension.
+    """
+    return [
+        [name for name, _ in sorted(d[bgc].items(), key=lambda x: x[1], reverse=True) if name != bgc]
+        for bgc in reference_bgcs
+    ]
+
+
 def make_cb_lists(d,reference_bgcs=None,skip_self=True,return_type='list'):
 
     return_dict=False
@@ -1290,12 +1325,21 @@ def find_hits_intersection(mibig_cb_dict,
                            parse=True,
                            stringent=True,
                            wiggle=1.0,
-                           skip_self=False):
+                           skip_self=False,
+                           drop_self_by_id=False):
     #tp=0
     reference_set=set(reference_bgcs)
     #get k in n for refs
-    ref_lists=make_cb_lists(mibig_cb_dict,reference_bgcs,skip_self=skip_self)
+    if drop_self_by_id:
+        ref_lists=make_cb_lists_drop_self_by_id(mibig_cb_dict,reference_bgcs)
+    else:
+        ref_lists=make_cb_lists(mibig_cb_dict,reference_bgcs,skip_self=skip_self)
     intersect_list=min_intersection_size_with_reference(ref_lists,reference_set)
+    if not intersect_list:
+        # a reference with no hits besides itself: no signature to train
+        print("warning: BLAST-rank skipped: at least one reference has no hits "
+              "other than itself")
+        return []
     index=find_index_of_first_max(intersect_list)
     value=int(wiggle*(intersect_list[index]))
 

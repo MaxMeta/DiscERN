@@ -610,12 +610,17 @@ def make_trees(out_folder_path,
                mibig_vecs_pol,
                use_pol=True,
                use_bs=True,
-               use_cb=True
+               use_cb=True,
+               cb_key=reformat_path_2
               ):
     
     """
     make tree files from hits and references using list returned by
     get_vecs_for_trees
+
+    cb_key maps a hit's region gbk path to its key in cb_vecs: the
+    knownclusterblast text file for --cb_source antismash (default), or the
+    gbk path itself for --cb_source diamond.
     """
 
     n_items = len(vecs_to_use) + len(refs)
@@ -644,10 +649,12 @@ def make_trees(out_folder_path,
             contig_name=bgc.split(".region")[0]
             pv_key2=contig_name+"::"+bgc_number
             #print(pv_key,pv_key2)
-            pol_subset[split_on_second_to_last(vec)[-1]]=pol_vecs[pv_key][pv_key2]
+            # BGCs without an NRPS/PKS polymer prediction get an empty k-mer
+            # set (distance 1 to everything) instead of a KeyError
+            pol_subset[split_on_second_to_last(vec)[-1]]=pol_vecs.get(pv_key,{}).get(pv_key2,set())
 
         for ref in refs:
-            pol_subset[ref]=mibig_vecs_pol[ref]
+            pol_subset[ref]=mibig_vecs_pol.get(ref,set())
             
         pol_mat,_,pol_ax=hierarchical_cluster_sets(list(pol_subset.values()),
                                            list(pol_subset.keys()))
@@ -674,8 +681,7 @@ def make_trees(out_folder_path,
         cb_subset={}
         #pol_subset_labels=[] #just use vecs_to_use + ref
         for vec in vecs_to_use:
-            cb_key=reformat_path_2(vec)
-            cb_subset[split_on_second_to_last(vec)[-1]]=cb_vecs[cb_key]
+            cb_subset[split_on_second_to_last(vec)[-1]]=cb_vecs[cb_key(vec)]
 
         for ref in refs:
             cb_subset[ref]=mibig_vecs_cb[ref]

@@ -19,13 +19,19 @@ def run_low_n_search(
     poly_dict: dict,
     mibig_vecs_pol: dict,
     ref_set: set,
-    output_dir: str
+    output_dir: str,
+    cb_keys_are_gbk: bool = False
 ):
     """
     Runs the low-N discovery mode and saves the results.
 
     A hit is defined as a BGC where BOTH the top BLAST hit AND the top
     polymer structure hit are members of the user-defined reference set.
+
+    cb_keys_are_gbk: True when cb_vecs come from --cb_source diamond and are
+    already keyed by region GenBank path (with antiSMASH KnownClusterBlast
+    they are keyed by the knownclusterblast text file). With diamond, the top
+    BLAST hit can be a custom reference.
     """
     print("Starting Low-N Mode search for BGC family expansion.")
     
@@ -34,7 +40,7 @@ def run_low_n_search(
     top_blast_hits = {}
     for cb_path, blast_vector in tqdm(cb_vecs.items(), desc="Processing BLAST vectors"):
         # Convert the clusterblast text file path to a standard gbk path
-        gbk_path = change_file_paths([cb_path])[0]
+        gbk_path = cb_path if cb_keys_are_gbk else change_file_paths([cb_path])[0]
         top_blast_hits[gbk_path] = _find_top_blast_hit(blast_vector)
 
     #Find the top polymer hit for every query BGC ---

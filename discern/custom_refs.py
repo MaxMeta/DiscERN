@@ -13,24 +13,37 @@ REFERENCE_FILES_HELP = (
     "(the antiSMASH JSON), all sharing the same <name>."
 )
 
+REFERENCE_FILES_HELP_DIAMOND = (
+    "With --cb_source diamond, each custom reference needs <name>.gbk (the antiSMASH "
+    "region GenBank file) and, with --poly_search, <name>.json (the antiSMASH JSON), "
+    "sharing the same <name>; KnownClusterBlast .txt files are not used."
+)
+
+
+def _files_help(require_txt):
+    return REFERENCE_FILES_HELP if require_txt else REFERENCE_FILES_HELP_DIAMOND
+
 
 class CustomReferenceError(ValueError):
     """A custom reference directory cannot be used as given."""
 
 
-def max_achievable_k(custom_refs, poly_search):
+def max_achievable_k(custom_refs, poly_search, cb_source="antismash"):
     """
     The highest algorithm support (k) a hit can reach in this run:
-    pfam-vec and blast-vec, plus BLAST-rank with MIBiG references (custom
-    references never appear in each other's KnownClusterBlast results, so
-    BLAST-rank cannot run), plus the polymer method with --poly_search.
+    pfam-vec and blast-vec, plus BLAST-rank, plus the polymer method with
+    --poly_search. With --cb_source antismash, BLAST-rank cannot run when
+    there are custom references, because they never appear in anyone's
+    KnownClusterBlast results; with --cb_source diamond they are subjects of
+    the search, so BLAST-rank runs for MIBiG, custom and mixed references.
     """
-    return (2 if custom_refs else 3) + (1 if poly_search else 0)
+    blast_rank = cb_source == "diamond" or not custom_refs
+    return 2 + (1 if blast_rank else 0) + (1 if poly_search else 0)
 
 
-def cap_min_k(min_k, custom_refs, poly_search):
+def cap_min_k(min_k, custom_refs, poly_search, cb_source="antismash"):
     """Return (min_k to use for the trees, max achievable k)."""
-    max_k = max_achievable_k(custom_refs, poly_search)
+    max_k = max_achievable_k(custom_refs, poly_search, cb_source)
     return min(min_k, max_k), max_k
 
 
@@ -72,16 +85,18 @@ def _unmatched(labels, names, ext):
     return problems
 
 
-def _raise_unmatched(ref_dir, problems):
+def _raise_unmatched(ref_dir, problems, require_txt=True):
     raise CustomReferenceError(
         f"the files in the custom reference directory '{ref_dir}' do not match up. "
-        f"{REFERENCE_FILES_HELP} Unmatched: {'; '.join(problems)}."
+        f"{_files_help(require_txt)} Unmatched: {'; '.join(problems)}."
     )
 
 
-def check_reference_files(ref_dir, poly_search=False):
+def check_reference_files(ref_dir, poly_search=False, require_txt=True):
     """
     Check that every reference has matching .gbk / .txt (/ .json) files.
+    require_txt is False for --cb_source diamond, which does not use
+    KnownClusterBlast output; names must then be usable as FASTA IDs.
 
     Returns:
         The sorted list of reference .gbk paths.
@@ -93,17 +108,27 @@ def check_reference_files(ref_dir, poly_search=False):
     if not gbk_paths:
         raise CustomReferenceError(
             f"no .gbk files found in the custom reference directory '{ref_dir}'. "
-            f"{REFERENCE_FILES_HELP}"
+            f"{_files_help(require_txt)}"
         )
     labels = [file_stem(path) for path in gbk_paths]
 
-    extensions = [".txt", ".json"] if poly_search else [".txt"]
+    if not require_txt:
+        bad = [label for label in labels if "|" in label or any(c.isspace() for c in label)]
+        if bad:
+            raise CustomReferenceError(
+                "custom reference names must not contain '|' or whitespace: "
+                + ", ".join(f"{label}.gbk" for label in bad)
+            )
+
+    extensions = [".txt"] if require_txt else []
+    if poly_search:
+        extensions.append(".json")
     problems = []
     for ext in extensions:
         names = [file_stem(path) for path in glob.glob(os.path.join(ref_dir, "*" + ext))]
         problems.extend(_unmatched(labels, names, ext))
     if problems:
-        _raise_unmatched(ref_dir, problems)
+        _raise_unmatched(ref_dir, problems, require_txt)
 
     return gbk_paths
 
@@ -112,16 +137,17 @@ def validate_reference_vectors(ref_dir, labels, bs_vecs, cb_vecs, pol_vecs=None,
                                poly_search=False):
     """
     Check that every reference label has a vector for each method in use, so
-    that later lookups by label cannot fail with a KeyError.
+    that later lookups by label cannot fail with a KeyError. cb_vecs is None
+    with --cb_source diamond, where blast vectors are built later.
 
     Raises:
         CustomReferenceError: if a vector is missing.
     """
-    problems = _unmatched(labels, cb_vecs, ".txt")
+    problems = _unmatched(labels, cb_vecs, ".txt") if cb_vecs is not None else []
     if poly_search:
         problems.extend(_unmatched(labels, pol_vecs or {}, ".json"))
     if problems:
-        _raise_unmatched(ref_dir, problems)
+        _raise_unmatched(ref_dir, problems, require_txt=cb_vecs is not None)
 
     # dataframe_to_sparse_dict drops BGCs with no biosynthetic Pfam hits.
     no_bs = sorted(set(labels) - set(bs_vecs))
@@ -133,7 +159,7 @@ def validate_reference_vectors(ref_dir, labels, bs_vecs, cb_vecs, pol_vecs=None,
             "CDS translations, or remove it from the reference directory."
         )
 
-    for label in labels:
+    for label in labels if cb_vecs is not None else []:
         if not cb_vecs[label]:
             print(
                 f"warning: no KnownClusterBlast hits were read from {label}.txt. Check that "
@@ -144,19 +170,22 @@ def validate_reference_vectors(ref_dir, labels, bs_vecs, cb_vecs, pol_vecs=None,
 
 
 def load_custom_references(ref_dir, db_dir, num_cpus=0, poly_search=False,
-                           as6=False, mibig_exclude=None):
+                           as6=False, mibig_exclude=None, cb_source="antismash"):
     """
     Build reference vectors from a directory of custom reference BGCs.
 
     Returns:
         (labels, gbk_paths, bs_vecs, cb_vecs, pol_vecs), where labels are the
         .gbk file stems and every vector dict is keyed by those stems.
-        pol_vecs is empty unless poly_search is set.
+        pol_vecs is empty unless poly_search is set. cb_vecs is None with
+        cb_source "diamond": those vectors come from the DIAMOND search
+        (cb_sources.diamond_cb_vectors), which needs only the .gbk files.
 
     Raises:
         CustomReferenceError: if the directory cannot be used.
     """
-    gbk_paths = check_reference_files(ref_dir, poly_search)
+    use_kcb = cb_source != "diamond"
+    gbk_paths = check_reference_files(ref_dir, poly_search, require_txt=use_kcb)
     labels = [file_stem(path) for path in gbk_paths]
 
     if len(labels) == 1:
@@ -173,14 +202,14 @@ def load_custom_references(ref_dir, db_dir, num_cpus=0, poly_search=False,
     )
     cb_vecs = _key_by_stem(
         parse_cb_outputs(ref_dir, glob_pattern="*.txt", num_cpus=num_cpus)
-    )
+    ) if use_kcb else None
     # One flat k-mer token set per reference, like mibig_pol_dict.pkl. Only
     # needed (and .json files only required) with --poly_search.
     pol_vecs = make_reference_polymer_dict(ref_dir, as6=as6) if poly_search else {}
 
     validate_reference_vectors(ref_dir, labels, bs_vecs, cb_vecs, pol_vecs, poly_search)
 
-    if mibig_exclude and mibig_exclude != 'self':
+    if use_kcb and mibig_exclude and mibig_exclude != 'self':
         # Drop excluded MIBiG BGCs from the reference blast-vecs.
         for vec in cb_vecs.values():
             for bgc in mibig_exclude:
