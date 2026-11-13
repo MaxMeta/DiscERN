@@ -13,6 +13,7 @@
 *   [Usage](#usage)
     *   [Command-Line Arguments](#command-line-arguments)
     *   [Custom Reference BGCs](#custom-reference-bgcs)
+    *   [Native Homology Search (`--cb_source diamond`)](#native-homology-search---cb_source-diamond)
 *   [Example Walkthrough](#example-walkthrough)
 *   [Interpreting the Output](#interpreting-the-output)
     *   [Primary Hit Files](#primary-hit-files)
@@ -122,6 +123,17 @@ Verify antismash installed correctly. This should display the help menu with all
 antismash --help
 ```
 
+### Step 5 (optional): Set Up MIBiG for the Native Homology Search
+
+Only needed for `--cb_source diamond` (see [Native Homology Search](#native-homology-search---cb_source-diamond)). This downloads MIBiG 4.0's protein sequences (md5-checked), builds a DIAMOND database and searches MIBiG against itself. Searching MIBiG against itself took about 35 minutes with 8 CPUs in our tests, and the set needs about 90 MB in `discern/mibig_db/` (about 250 MB with the legacy set below). To put it elsewhere, use `discern-setup-mibig --db_dir <folder>` and `discern --mibig_db_dir <folder>`, or set the `DISCERN_MIBIG_DB` environment variable for both.
+```bash
+discern-setup-mibig -c 8
+```
+To also use the entries that MIBiG dropped before release 4.0 (see [MIBiG releases](#mibig-releases-and-dropped-entries)):
+```bash
+discern-setup-mibig --set 4.0_legacy -c 8
+```
+
 
 ## How DiscERN Works
 
@@ -168,20 +180,27 @@ discern -a <antismash_directory> -o <output_directory> -r <reference_bgcs> [OPTI
     2.  **MIBiG IDs (file)**: Path to a text file containing one MIBiG accession number per line.
     3.  **Custom Directory**: Path to a directory of your own reference BGCs (`<name>.gbk`, `<name>.txt` and, for `--poly_search`, `<name>.json`), for using non-MIBiG BGCs as references. See [Custom Reference BGCs](#custom-reference-bgcs) for how to prepare it and what this mode can't do.
 
+    To combine MIBiG and custom references, give the MIBiG IDs with `-r` and the directory with `--custom_refs`.
+
 #### **Common Options:**
 *   `-c`, `--num_cpus`: Number of CPUs to use for parallel processing. (Default: all available physical cores).
 *   `-p`, `--poly_search`: Activates the "Structural K-mer Intersection" method. This is highly recommended for families of NRPS, PKS, or hybrid NRPS/PKS BGCs, especially those with 5 or more modules.
 *   `-u`, `--reuse`: Path to a previous DiscERN output directory. If specified, DiscERN will reuse the intermediate vector and count files (`bs_vecs.json`, `cb_vecs.json`, etc.) from that run, saving significant computation time. The `--antismash_dir` must point to the same input directory used for the original run.
 *   `-s`, `--resmash`: If specified, DiscERN will automatically run antiSMASH on the final combined hit `.gbk` files. 
 *   `--as6`: Flag to indicate that the antiSMASH outputs were generated with antiSMASH version 6. This adjusts the parsing logic for polymer predictions.
+*   `--custom_refs`: A directory of custom reference BGCs to use together with the MIBiG references given with `-r`.
+*   `--cb_source`: Where the BLAST-derived vectors for `blast-vec` and `blast-rank` come from: `antismash` (default) parses antiSMASH KnownClusterBlast output and uses the bundled MIBiG data, as in the published results; `diamond` uses DiscERN's own DIAMOND search. See [Native Homology Search](#native-homology-search---cb_source-diamond).
+*   `--mibig_set`: With `--cb_source diamond`, which MIBiG set to use: `4.0` (default, MIBiG 4.0 as published) or `4.0_legacy` (4.0 plus the entries dropped before 4.0).
 
 #### **Advanced Options:**
-*   `-k`, `--min_k`: The minimum algorithm support score (`k`) required for a hit to be included in the output hierarchical clustering trees. (Default: 3). If this is above the highest `k` a hit can reach in the run (3, or 4 with `--poly_search`; 2, or 3 with `--poly_search`, for a custom reference directory), that maximum is used instead.
+*   `-k`, `--min_k`: The minimum algorithm support score (`k`) required for a hit to be included in the output hierarchical clustering trees. (Default: 3). If this is above the highest `k` a hit can reach in the run (3, or 4 with `--poly_search`; with `--cb_source antismash` and custom references, 2, or 3 with `--poly_search`), that maximum is used instead.
 *   `-b`, `--beta`: Use the F-beta score instead of the Matthews Correlation Coefficient (MCC) for training the classification models. You must provide a beta value (e.g., `-b 1.0` for the F1-score).
-*   `-x`, `--mibig_exclude`: Exclude specific MIBiG BGCs from the background reference database during analysis. Can be a space-separated string of IDs, a file with one ID per line, or the keyword `self` to automatically exclude the reference BGCs themselves from the background set (`self` only works with MIBiG references and is ignored for a custom reference directory).
+*   `-x`, `--mibig_exclude`: Exclude specific MIBiG BGCs from the background reference database during analysis. Can be a space-separated string of IDs, a file with one ID per line, or the keyword `self` to automatically exclude the reference BGCs themselves from the background set (`self` applies to the MIBiG references given with `-r`, and is ignored when there are none).
 *   `--bigslice_cutoff`, `--clusterblast_cutoff`: Manually set the cosine distance cutoffs for the `pfam-vec` and `blast-vec` methods, respectively. This overrides the automatically determined thresholds.
 *   `--vec_check`: Perform a check on the reference BGC collection for internal consistency and identify other MIBiG BGCs that are closely related. (Default: True).
 *   `--hclust`: Generate hierarchical clustering dendrograms and a combined Newick tree for high-confidence hits. (Default: True).
+*   `--mibig_db_dir`: With `--cb_source diamond`, where `discern-setup-mibig` built the MIBiG sets (default: `discern/mibig_db`, or the `DISCERN_MIBIG_DB` environment variable).
+*   `--cb_cap`: With `--cb_source diamond`, how many subject BGCs each blast vector keeps, after MIBiG and custom hits are merged (default: 50, as antiSMASH KnownClusterBlast; 0 keeps all).
 
 
 ---
@@ -194,7 +213,7 @@ to the complete antiSMASH output for a single genome.
 
 The antiSMASH runs need to have been completed with known cluster blast activated using 
 the flag ```--cb-knownclusters``` 
-Make sure you enable this when generating antismash outputs for use with DiscERN
+Make sure you enable this when generating antismash outputs for use with DiscERN. (With `--cb_source diamond` this is not needed: DiscERN runs its own search on the region `.gbk` files.)
 
 DiscERN will automatically scan these subdirectories to find the necessary files (e.g., `.gbk`, `.json`, and `knownclusterblast/` files) for its analysis.
 
@@ -239,13 +258,17 @@ antismash_runs/
 
 Instead of MIBiG accessions, `-r` can point to a directory of your own reference BGCs, for example family members that are not in MIBiG.
 
-**What each reference needs.** Three antiSMASH output files that share one base name, `<name>`:
+Use `-r <directory>` for custom references only, or `-r "<MIBiG IDs>" --custom_refs <directory>` to mix them with MIBiG references.
+
+**What each reference needs.** AntiSMASH output files that share one base name, `<name>`:
 
 | File | Source | Needed |
 |---|---|---|
 | `<name>.gbk` | The antiSMASH **region** GenBank file, `<record>.region001.gbk`. Not the whole-record `<record>.gbk`. | Always |
-| `<name>.txt` | The KnownClusterBlast output for that region, `knownclusterblast/<record>_c1.txt`. antiSMASH only writes this when run with `--cb-knownclusters`. | Always |
+| `<name>.txt` | The KnownClusterBlast output for that region, `knownclusterblast/<record>_c1.txt`. antiSMASH only writes this when run with `--cb-knownclusters`. | With `--cb_source antismash` (the default) |
 | `<name>.json` | The antiSMASH JSON, `<record>.json`. | With `--poly_search` |
+
+With `--cb_source diamond`, names must not contain `|` or spaces, or be the same as a MIBiG ID.
 
 If a file is missing or the names don't match, DiscERN stops before the analysis and lists the unmatched files.
 
@@ -263,11 +286,11 @@ cp as_ref1/<record>.json                     my_refs/ref1.json   # only needed f
 Here `<record>` is the record ID antiSMASH gives the input sequence. If antiSMASH finds more than one region, use the `regionNNN.gbk` and `_cN.txt` files of the BGC you want.
 
 **Limits.**
-*   BLAST-rank (`ol_hits`) is unavailable, because custom references never appear in each other's KnownClusterBlast results. The maximum support is therefore k=2 (pfam-vec and blast-vec), or k=3 with `--poly_search`, and `--min_k` is capped to that maximum. DiscERN prints a notice saying this at the start of the run.
+*   With `--cb_source antismash`, BLAST-rank (`ol_hits`) is unavailable, because custom references never appear in each other's KnownClusterBlast results. The maximum support is therefore k=2 (pfam-vec and blast-vec), or k=3 with `--poly_search`, and `--min_k` is capped to that maximum. DiscERN prints a notice saying this at the start of the run. With `--cb_source diamond`, custom references are part of the search, so all four methods run and the maximum is k=4, as with MIBiG references.
 *   The k≥3 precision figure under [Primary Hit Files](#primary-hit-files) was benchmarked with MIBiG references and does not apply here.
 *   Use at least two references. With a single reference the trained distance thresholds collapse to 0 and `--vec_check` is skipped.
 
-**Exclusions.** If the family already has members in MIBiG, they stay in the background set and count as negatives when the pfam-vec, blast-vec and polymer thresholds are trained, which makes the thresholds tighter. Exclude them with `-x` and explicit MIBiG IDs. To find candidates, check `other_close_mibig_bgcs` in `blast_vec_check.json` and `bigslice_vec_check.json`; DiscERN also prints these BGCs at the end of a custom-reference run. `-x self` is ignored in this mode.
+**Exclusions.** If the family already has members in MIBiG, they stay in the background set and count as negatives when the pfam-vec, blast-vec and polymer thresholds are trained, which makes the thresholds tighter. Exclude them with `-x` and explicit MIBiG IDs. To find candidates, check `other_close_mibig_bgcs` in `blast_vec_check.json` and `bigslice_vec_check.json`; DiscERN also prints these BGCs at the end of a custom-reference run. `-x self` only excludes MIBiG references given with `-r`. With `--cb_source antismash`, excluded BGCs are removed from the MIBiG and reference blast vectors but stay as dimensions of the query vectors; with `--cb_source diamond` they are removed from every vector, as if they were not in MIBiG.
 
 **Example.** Using four calcium-dependent antibiotic (CDA) BGCs re-run through antiSMASH as custom references, and excluding their MIBiG entries from the background:
 
@@ -278,6 +301,40 @@ discern -a ~/discern_test/inputs \
 -x "BGC0000315 BGC0000336 BGC0000354 BGC0000439" \
 --poly_search
 ```
+
+### Native Homology Search (`--cb_source diamond`)
+
+By default, `blast-vec` and `blast-rank` use antiSMASH's KnownClusterBlast output, whose subjects are MIBiG BGCs from the KnownClusterBlast database of your antiSMASH version, compared against MIBiG vectors bundled with DiscERN. With `--cb_source diamond`, DiscERN instead runs its own DIAMOND search of the query regions against MIBiG proteins and your custom references, scored the same way (antiSMASH KnownClusterBlast settings: e-value 1e-5, identity > 45 %, query coverage > 40 %, hits from at least two query genes on at least two reference genes; score = sum over query genes of the best bitscore; the top 50 references kept per BGC). This means:
+
+*   custom references are subjects of the search, so they get `blast-vec` dimensions and can appear in `blast-rank` hit lists: all four methods run with MIBiG, custom or mixed references;
+*   antiSMASH no longer needs `--cb-knownclusters`, and results don't depend on antiSMASH's KnownClusterBlast database version;
+*   the MIBiG background is built by the same code as the query vectors, from one MIBiG release (and the Pfam-vec vectors are rebuilt from that release too).
+
+Run `discern-setup-mibig` once first (see [Step 5](#step-5-optional-set-up-mibig-for-the-native-homology-search)). Then add `--cb_source diamond`:
+
+```bash
+discern -a ~/discern_test/inputs \
+-o ~/discern_test/cda_diamond_output \
+-r "BGC0000315 BGC0001370 BGC0001968 BGC0001984" \
+--custom_refs ~/my_cda_refs \
+--cb_source diamond \
+--poly_search
+```
+
+The query hits against MIBiG are saved in the output folder (`cb_raw_mibig-<set>.json.gz`), so `-u` reuses them when you run another reference family on the same inputs. Each run writes `run_info.json` with the DiscERN version and commit, the blast source, MIBiG set and releases, DIAMOND version, search settings and the MIBiG and custom references used.
+
+`--cb_source diamond` is new and has not yet been re-benchmarked against the published results, which were produced with `--cb_source antismash`. Use the default to reproduce them.
+
+#### MIBiG releases and dropped entries
+
+The native search uses MIBiG 4.0 as published by default (`--mibig_set 4.0`). MIBiG has dropped entries over time: 244 BGCs that were in releases 1.4–3.1 are not in 4.0. Where MIBiG recorded a reason, it is mostly that the entry duplicated another one (79), failed validation (28), was split over several contigs or loci (27) or contained a single gene (16); 78 have no recorded reason. Some of these are still useful references. To use them, build and select the `4.0_legacy` set, which adds each dropped entry back from the most recent release that still contained it:
+
+```bash
+discern-setup-mibig --set 4.0_legacy -c 8
+discern ... --cb_source diamond --mibig_set 4.0_legacy -r "BGC0000025 ..."
+```
+
+[docs/mibig_dropped_entries.md](docs/mibig_dropped_entries.md) lists every dropped entry with MIBiG's reason and its closest MIBiG 4.0 entry. Some are near-duplicates of a current entry; in the legacy set they are part of the background too, so if a near-duplicate's current twin is in your reference family, add the dropped entry to your references or exclude it with `-x`. If you give a dropped entry as a reference without the legacy set, DiscERN stops and says so. Dropped entries have no bundled feature counts or polymer predictions, so the conserved-domain filter and the polymer method leave them out.
 
 ## Example Walkthrough
 Let's find new members of the calcium-dependent lipopeptide (CDA) family from a set of actinomycete genomes that have already been run through antiSMASH.
@@ -347,3 +404,5 @@ These files are generated during the run and are primarily for internal use, but
 *   `feature_counts.json`: The per-BGC counts of key Pfam domains.
 *   `poly_dict.pkl`: A pickled Python dictionary containing the structural k-mer sets for all NRPS/PKS BGCs.
 *   `bs_hits.json`, `cb_hits.json`, `ol_hits.json`, `polymer_hits.json`: JSON files listing the raw hits from each individual algorithm.
+*   `run_info.json`: How the run was set up: DiscERN version and commit, blast source, MIBiG set, DIAMOND version and search settings, and the MIBiG and custom references.
+*   `cb_raw_mibig-<set>.json.gz`, `cb_vecs_diamond_mibig-<set>.json` (`--cb_source diamond` only): The uncapped DIAMOND scores of every query region against MIBiG (reused by `-u`), and the final query blast vectors.
