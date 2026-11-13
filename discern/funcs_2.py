@@ -1,5 +1,5 @@
 import os
-#import re
+import re
 #import random
 #import sys
 import json
@@ -438,6 +438,9 @@ def make_all_feature_counts(as_dir,num_cpus, feature_dict, glob_pattern=None):
 ########################
 
 
+_MIBIG_VERSION_SUFFIX = re.compile(r"(?<=^BGC\d{7})\.\d+$")
+
+
 def parse_bgc_file(file_path):
     """
     Parses an antismash clusterblast file with repeating BGC chunks, extracts 
@@ -463,6 +466,9 @@ def parse_bgc_file(file_path):
     #The first chunk is empty/doesn't contain what we want, so we can skip it.
     for chunk in chunks[1:]:
         bgc_name = chunk.split(". ")[1].split("\n")[0]
+        # antiSMASH 8 reports versioned MIBiG accessions (BGC0000315.5), but the
+        # bundled MIBiG vectors and antiSMASH 7 outputs use unversioned ones.
+        bgc_name = _MIBIG_VERSION_SUFFIX.sub("", bgc_name)
         table_chunk=chunk.split('e-value):')[1].strip()
         df = pd.read_csv(StringIO(table_chunk), sep='\t')
         df.columns=['query gene', 'subject gene', '%identity', 'blast score', '%coverage', 'e-value']
