@@ -1,10 +1,17 @@
-"""Loading a directory of custom reference BGCs (``-r <directory>``)."""
+"""Loading and checking a directory of custom reference BGCs (``-r <directory>``)."""
 
 import glob
 import os
 
 from .funcs_2 import make_sparse_dict, parse_cb_outputs
 from .polymer_tools import make_reference_polymer_dict
+
+
+REFERENCE_FILES_HELP = (
+    "Each custom reference needs <name>.gbk (the antiSMASH region GenBank file), "
+    "<name>.txt (its KnownClusterBlast output) and, with --poly_search, <name>.json "
+    "(the antiSMASH JSON), all sharing the same <name>."
+)
 
 
 class CustomReferenceError(ValueError):
@@ -21,6 +28,90 @@ def _key_by_stem(vectors):
     return {file_stem(path): vec for path, vec in (vectors or {}).items()}
 
 
+def _unmatched(labels, names, ext):
+    """Describe .gbk stems without a matching file of type ext, and vice versa."""
+    labels, names = set(labels), set(names)
+    problems = []
+    missing = sorted(labels - names)
+    extra = sorted(names - labels)
+    if missing:
+        problems.append(f"no {ext} for {', '.join(missing)}")
+    if extra:
+        problems.append(f"no .gbk for {', '.join(n + ext for n in extra)}")
+    return problems
+
+
+def _raise_unmatched(ref_dir, problems):
+    raise CustomReferenceError(
+        f"the files in the custom reference directory '{ref_dir}' do not match up. "
+        f"{REFERENCE_FILES_HELP} Unmatched: {'; '.join(problems)}."
+    )
+
+
+def check_reference_files(ref_dir, poly_search=False):
+    """
+    Check that every reference has matching .gbk / .txt (/ .json) files.
+
+    Returns:
+        The sorted list of reference .gbk paths.
+
+    Raises:
+        CustomReferenceError: if there are no .gbk files or the names do not match.
+    """
+    gbk_paths = sorted(glob.glob(os.path.join(ref_dir, "*.gbk")))
+    if not gbk_paths:
+        raise CustomReferenceError(
+            f"no .gbk files found in the custom reference directory '{ref_dir}'. "
+            f"{REFERENCE_FILES_HELP}"
+        )
+    labels = [file_stem(path) for path in gbk_paths]
+
+    extensions = [".txt", ".json"] if poly_search else [".txt"]
+    problems = []
+    for ext in extensions:
+        names = [file_stem(path) for path in glob.glob(os.path.join(ref_dir, "*" + ext))]
+        problems.extend(_unmatched(labels, names, ext))
+    if problems:
+        _raise_unmatched(ref_dir, problems)
+
+    return gbk_paths
+
+
+def validate_reference_vectors(ref_dir, labels, bs_vecs, cb_vecs, pol_vecs=None,
+                               poly_search=False):
+    """
+    Check that every reference label has a vector for each method in use, so
+    that later lookups by label cannot fail with a KeyError.
+
+    Raises:
+        CustomReferenceError: if a vector is missing.
+    """
+    problems = _unmatched(labels, cb_vecs, ".txt")
+    if poly_search:
+        problems.extend(_unmatched(labels, pol_vecs or {}, ".json"))
+    if problems:
+        _raise_unmatched(ref_dir, problems)
+
+    # dataframe_to_sparse_dict drops BGCs with no biosynthetic Pfam hits.
+    no_bs = sorted(set(labels) - set(bs_vecs))
+    if no_bs:
+        raise CustomReferenceError(
+            "no biosynthetic Pfam domains were found in "
+            f"{', '.join(n + '.gbk' for n in no_bs)}, so there is no pfam-vec vector "
+            "for this reference. Check that it is an antiSMASH region GenBank file with "
+            "CDS translations, or remove it from the reference directory."
+        )
+
+    for label in labels:
+        if not cb_vecs[label]:
+            print(
+                f"warning: no KnownClusterBlast hits were read from {label}.txt. Check that "
+                "it is the knownclusterblast/<record>_c<N>.txt file from an antiSMASH run "
+                "with --cb-knownclusters; otherwise the blast-vec method gets no information "
+                "from this reference."
+            )
+
+
 def load_custom_references(ref_dir, db_dir, num_cpus=0, poly_search=False,
                            as6=False, mibig_exclude=None):
     """
@@ -29,27 +120,12 @@ def load_custom_references(ref_dir, db_dir, num_cpus=0, poly_search=False,
     Returns:
         (labels, gbk_paths, bs_vecs, cb_vecs, pol_vecs), where labels are the
         .gbk file stems and every vector dict is keyed by those stems.
+        pol_vecs is empty unless poly_search is set.
 
     Raises:
         CustomReferenceError: if the directory cannot be used.
     """
-    gbk_paths = sorted(glob.glob(os.path.join(ref_dir, "*.gbk")))
-    txt_paths = glob.glob(os.path.join(ref_dir, "*.txt"))
-    json_paths = glob.glob(os.path.join(ref_dir, "*.json"))
-
-    if not gbk_paths:
-        raise CustomReferenceError(
-            f"no .gbk files found in the custom reference directory '{ref_dir}'."
-        )
-
-    if len(gbk_paths) != len(txt_paths):
-        raise CustomReferenceError(
-            "number of reference knownclusterblast text files and gbk files not equal"
-        )
-
-    if poly_search and len(gbk_paths) != len(json_paths):
-        raise CustomReferenceError("number of json text files and gbk files not equal")
-
+    gbk_paths = check_reference_files(ref_dir, poly_search)
     labels = [file_stem(path) for path in gbk_paths]
 
     if len(labels) == 1:
@@ -70,6 +146,8 @@ def load_custom_references(ref_dir, db_dir, num_cpus=0, poly_search=False,
     # One flat k-mer token set per reference, like mibig_pol_dict.pkl. Only
     # needed (and .json files only required) with --poly_search.
     pol_vecs = make_reference_polymer_dict(ref_dir, as6=as6) if poly_search else {}
+
+    validate_reference_vectors(ref_dir, labels, bs_vecs, cb_vecs, pol_vecs, poly_search)
 
     if mibig_exclude and mibig_exclude != 'self':
         # Drop excluded MIBiG BGCs from the reference blast-vecs.
