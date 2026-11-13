@@ -4,7 +4,7 @@ import glob
 import os
 
 from .funcs_2 import make_sparse_dict, parse_cb_outputs
-from .polymer_tools import make_polymer_dict
+from .polymer_tools import make_reference_polymer_dict
 
 
 class CustomReferenceError(ValueError):
@@ -67,9 +67,9 @@ def load_custom_references(ref_dir, db_dir, num_cpus=0, poly_search=False,
     cb_vecs = _key_by_stem(
         parse_cb_outputs(ref_dir, glob_pattern="*.txt", num_cpus=num_cpus)
     )
-    pol_vecs = _key_by_stem(
-        make_polymer_dict(ref_dir, glob_pattern="*.json", as6=as6)
-    )
+    # One flat k-mer token set per reference, like mibig_pol_dict.pkl. Only
+    # needed (and .json files only required) with --poly_search.
+    pol_vecs = make_reference_polymer_dict(ref_dir, as6=as6) if poly_search else {}
 
     if mibig_exclude and mibig_exclude != 'self':
         # Drop excluded MIBiG BGCs from the reference blast-vecs.

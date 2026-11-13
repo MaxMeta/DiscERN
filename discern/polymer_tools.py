@@ -604,7 +604,55 @@ def make_polymer_dict(antismash_folder,glob_pattern=None,k=5,as6=False):
 
         
 
-    return polymer_dict  
+    return polymer_dict
+
+
+def merge_kmer_counts(kmer_counts):
+    """
+    Sums per-region k-mer counts into a single {kmer: count} dict.
+
+    Args:
+        kmer_counts: {region_key: {kmer: count}}, as returned by
+                     polymer_predictions_to_kmer_vectors
+    """
+    merged = Counter()
+    for counts in kmer_counts.values():
+        merged.update(counts)
+    return dict(merged)
+
+
+def merged_kmer_token_set(kmer_counts):
+    """
+    Converts {region_key: {kmer: count}} into one flat k-mer token set
+    ({"1_kmer", "2_kmer", ...}), the format used in mibig_pol_dict.pkl.
+
+    Counts are summed before flattening: tokens are "{n}_{kmer}" for
+    n = 1..count, so a union of already-flattened sets would undercount
+    k-mers repeated across regions.
+    """
+    merged = merge_kmer_counts(kmer_counts)
+    return flatten_polymer_dicts({"merged": merged})["merged"]
+
+
+def make_reference_polymer_dict(ref_dir, k=5, as6=False):
+    """
+    Builds {file_stem: flat k-mer token set} for each antiSMASH JSON in
+    ref_dir, matching the format of the bundled mibig_pol_dict.pkl
+    (one flat set per reference BGC, k-mers up to k=5).
+    """
+    ref_pol = {}
+    for json_file in sorted(glob.glob(os.path.join(ref_dir, "*.json"))):
+        stem = os.path.basename(json_file).rsplit(".", 1)[0]
+        predictions = make_predictions(json_file, as6=as6)  # {contig::n: {orf: [monomers]}}
+        kmer_counts = polymer_predictions_to_kmer_vectors(predictions, k)  # {contig::n: {kmer: count}}
+        if not kmer_counts:
+            print(f"warning: no NRPS/PKS polymer prediction in {json_file}; "
+                  "the polymer method cannot match this reference")
+        elif len(kmer_counts) > 1:
+            print(f"warning: {json_file} has {len(kmer_counts)} NRPS/PKS regions; "
+                  "merging them into one reference")
+        ref_pol[stem] = merged_kmer_token_set(kmer_counts)
+    return ref_pol
 
 
 def get_polymer_matches(polymer_dict,mibig_vecs):
