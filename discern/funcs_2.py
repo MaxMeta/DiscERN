@@ -690,12 +690,12 @@ def analyse_genbank_set(gbk_set: Union[List[str], Set[str]],
                          to search for (same structure as for make_counts).
 
     Returns:
-        A sparse dictionary of conserved features and their minimum counts across all
-        GenBank files in the directory.  Returns an empty dictionary if no .gbk files
-        are found or if no conserved features with counts > 0 are found.
+        A flat dictionary of conserved features and their minimum counts across all
+        GenBank files, keyed like flatten_nested_dict(make_counts(...)), i.e. like the
+        query feature counts used by filter_by_domains. Returns an empty dictionary if
+        no files are given or if no conserved features with counts > 0 are found.
 
     Raises:
-        FileNotFoundError: If the provided directory_path does not exist.
         ValueError: If the search_criteria is empty.
     """
 
@@ -707,11 +707,28 @@ def analyse_genbank_set(gbk_set: Union[List[str], Set[str]],
     for filepath in gbk_set:
         try:
             counts = make_counts(filepath, search_criteria)
-            feature_counts_list.append(counts)
+            # make_counts returns {pattern: count} rather than the nested
+            # {feature: {qualifier: {pattern: count}}} form when only one
+            # feature/qualifier combination matched, which find_conserved_features
+            # cannot handle. Compare flattened counts instead.
+            feature_counts_list.append(flatten_nested_dict(counts))
         except Exception as e:
             print(f"Error processing {filepath}: {e}")
-    conserved_features = find_conserved_features(feature_counts_list)
-    return conserved_features
+    return find_conserved_flat_features(feature_counts_list)
+
+
+def find_conserved_flat_features(flat_counts_list: List[Dict[str, int]]) -> Dict[str, int]:
+    """
+    Features present (count > 0) in every flat {feature: count} dict, with their
+    minimum count. For nested inputs this gives the same result as
+    flatten_nested_dict(find_conserved_features(...)).
+    """
+    if not flat_counts_list:
+        return {}
+    shared = set.intersection(*(
+        {key for key, count in counts.items() if count > 0} for counts in flat_counts_list
+    ))
+    return {key: min(counts[key] for counts in flat_counts_list) for key in sorted(shared)}
 
 
 def filter_by_domains(cb_hits,count_dict,domain_cutoffs):
