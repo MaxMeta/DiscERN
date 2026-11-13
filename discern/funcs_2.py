@@ -315,6 +315,42 @@ def make_sparse_dict(antismash_folder,
     print(f"Finished processing {num_chunks} chunks.")
     return collated_data
 
+def make_sparse_dict_from_proteins(proteins_by_bgc, hmmdb_folder, num_cpus=0, chunk_size=500):
+    """
+    BiG-SLiCE (pfam-vec) vectors from protein sequences rather than GenBank files.
+
+    Args:
+        proteins_by_bgc: {bgc_name: [protein sequences]}
+    Returns:
+        {bgc_name: {feature: value}}; BGCs without biosynthetic Pfam hits get {}.
+    """
+    available_cpus = psutil.cpu_count(logical=False)
+    if num_cpus == 0 or num_cpus > available_cpus:
+        num_cpus = available_cpus
+    allowed = set(Alphabet.amino().symbols)
+    names = list(proteins_by_bgc)
+    vectors = {}
+    for start in range(0, len(names), chunk_size):
+        chunk = names[start:start + chunk_size]
+        print(f"pfam-vec: BGCs {start + 1}-{start + len(chunk)} of {len(names)}")
+        bgcs = []
+        for name in chunk:
+            bgcs.append({
+                "name": name,
+                "cds": [
+                    TextSequence(name=bytes(f"{len(bgcs)}-{j}", "utf-8"),
+                                 sequence="".join(c if c in allowed else "X" for c in seq.upper()))
+                    .digitize(Alphabet.amino())
+                    for j, seq in enumerate(proteins_by_bgc[name])
+                ],
+            })
+        chunk_df = extract_features(bgcs, hmmdb_folder, num_cpus=num_cpus)
+        chunk_vectors = dataframe_to_sparse_dict(chunk_df)
+        for name in chunk:
+            vectors[name] = {k: int(v) for k, v in chunk_vectors.get(name, {}).items()}
+    return vectors
+
+
 ##############################
 #-feature-counting-functions-#
 ##############################

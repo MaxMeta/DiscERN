@@ -1,0 +1,3360 @@
+{
+ "BGC0000005": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000008",
+  "closest_score_ratio": 0.977,
+  "compounds": [
+   "aflatoxin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "contains single non-core gene"
+ },
+ "BGC0000015": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000115",
+  "closest_score_ratio": 0.631,
+  "compounds": [
+   "amphotericin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "not in MIBiG releases after 1.4; no retirement record in the MIBiG 4.0 metadata"
+ },
+ "BGC0000025": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001731",
+  "closest_score_ratio": 0.409,
+  "compounds": [
+   "avermectin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000049": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001653",
+  "closest_score_ratio": 0.347,
+  "compounds": [
+   "E-492",
+   "E-975"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000061": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000034",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "levorin A3",
+   "C06690",
+   "FR-008-III",
+   "candicidin A",
+   "UNII-AP5PEF5W7U"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000034 (see also BGC0000034)"
+ },
+ "BGC0000089": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000088",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "lovastatin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000088 (see also BGC0000088)"
+ },
+ "BGC0000095": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001303",
+  "closest_score_ratio": 0.705,
+  "compounds": [
+   "micromonolactam"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000108": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001690",
+  "closest_score_ratio": 0.866,
+  "compounds": [
+   "natamycin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000155": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001913",
+  "closest_score_ratio": 0.196,
+  "compounds": [
+   "T-toxin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000183": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001025",
+  "closest_score_ratio": 0.743,
+  "compounds": [
+   "paenimacrolidin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000206": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000207",
+  "closest_score_ratio": 0.431,
+  "compounds": [
+   "chartreusin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000228": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000227",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "granaticin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000227 (see also BGC0000227)"
+ },
+ "BGC0000230": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000266",
+  "closest_score_ratio": 0.418,
+  "compounds": [
+   "griseorhodin A"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000246": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000247",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "mithramycin"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000247 (see also BGC0000247)"
+ },
+ "BGC0000250": {
+  "classes": [
+   "Polyketide",
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0002982",
+  "closest_score_ratio": 0.412,
+  "compounds": [
+   "nogalaviketone",
+   "nogalonic acid",
+   "nogalonic acid methyl ester",
+   "nogalavinone",
+   "3',4'-demethoxynogalose-nogalamycinone",
+   "3',4'-demethoxynogalose-1-hydroxynogalamycinone",
+   "nogalamycin F",
+   "nogalamycin R",
+   "nogalamycin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000251": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002982",
+  "closest_score_ratio": 0.24,
+  "compounds": [
+   "nogalamycin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Missing publication"
+ },
+ "BGC0000276": {
+  "classes": [
+   "Polyketide",
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0001384",
+  "closest_score_ratio": 0.631,
+  "compounds": [
+   "Urdamycin A"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000284": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "phenolic lipids"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000299": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0002949",
+  "closest_score_ratio": 0.025,
+  "compounds": [
+   "alterochromide A",
+   "bromoalterochromide A",
+   "dibromoalterochromide A",
+   "alterochromide B",
+   "bromoalterochromide B",
+   "dibromoalterochromide B",
+   "alterochromide A'",
+   "bromoalterochromide A'",
+   "dibromoalterochromide A'",
+   "alterochromide B'",
+   "bromoalterochromide B'",
+   "dibromoalterochromide B'",
+   "alterochromide A''",
+   "bromoalterochromide A''",
+   "alterochromide B''",
+   "bromoalterochromide B''"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0000314 (see also BGC0000314)"
+ },
+ "BGC0000314": {
+  "classes": [
+   "NRP",
+   "Polyketide",
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0002949",
+  "closest_score_ratio": 0.026,
+  "compounds": [
+   "bromoalterochromide A"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000317": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0000404",
+  "closest_score_ratio": 0.338,
+  "compounds": [
+   "cephalosporin C"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0000318": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001190",
+  "closest_score_ratio": 0.27,
+  "compounds": [
+   "cephalosporin, cefEFG genes"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Missing publication"
+ },
+ "BGC0000338": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001371",
+  "closest_score_ratio": 0.452,
+  "compounds": [
+   "Echinocandin B"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000356": {
+  "classes": [
+   "NRP",
+   "Alkaloid"
+  ],
+  "closest_4.0_entry": "BGC0000818",
+  "closest_score_ratio": 0.305,
+  "compounds": [
+   "verruculogen",
+   "fumitremorgin B",
+   "fumitremorgin c",
+   "tryprostatin A",
+   "tryprostatin B",
+   "demethoxyfumitremorgin C",
+   "brevianamide F"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000358": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001152",
+  "closest_score_ratio": 0.909,
+  "compounds": [
+   "fusaricidin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000361": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001609",
+  "closest_score_ratio": 0.212,
+  "compounds": [
+   "gliotoxin",
+   "bisdethiobis(methylthio)gliotoxin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0000370": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001166",
+  "closest_score_ratio": 0.399,
+  "compounds": [
+   "HC-toxin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000389": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001312",
+  "closest_score_ratio": 0.84,
+  "compounds": [
+   "massetolide A"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0000406": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001006",
+  "closest_score_ratio": 0.042,
+  "compounds": [
+   "phosphinothricintripeptide"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0000456": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0002188",
+  "closest_score_ratio": 0.561,
+  "compounds": [
+   "verlamelin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000458": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0000316",
+  "closest_score_ratio": 0.413,
+  "compounds": [
+   "viomycin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000462": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001838",
+  "closest_score_ratio": 0.788,
+  "compounds": [
+   "WLIP"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000463": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0000344",
+  "closest_score_ratio": 0.707,
+  "compounds": [
+   "xantholysin A",
+   "xantholysin B",
+   "xantholysin C"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0000481": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0002551",
+  "closest_score_ratio": 0.452,
+  "compounds": [
+   "trichamide"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000596": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0000595",
+  "closest_score_ratio": 0.985,
+  "compounds": [
+   "SLI-2138"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": true,
+  "reason": "validation failed"
+ },
+ "BGC0000629": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0002149",
+  "closest_score_ratio": 0.135,
+  "compounds": [
+   "aflatrem"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000655": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0000611",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "siomycin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000611 (see also BGC0000611)"
+ },
+ "BGC0000661": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0000657",
+  "closest_score_ratio": 0.341,
+  "compounds": [
+   "geosmin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000680": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001729",
+  "closest_score_ratio": 0.387,
+  "compounds": [
+   "austinol",
+   "dehydroaustinol"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0000691": {
+  "classes": [
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0000804",
+  "closest_score_ratio": 0.21,
+  "compounds": [
+   "acarbose"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000695": {
+  "classes": [
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0000700",
+  "closest_score_ratio": 0.266,
+  "compounds": [
+   "fortimicin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000697": {
+  "classes": [
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0001603",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "gentamicin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000696 (see also BGC0000696)"
+ },
+ "BGC0000710": {
+  "classes": [
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0000709",
+  "closest_score_ratio": 0.664,
+  "compounds": [
+   "neomycin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0000709 (see also BGC0000709)"
+ },
+ "BGC0000717": {
+  "classes": [
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0000724",
+  "closest_score_ratio": 0.359,
+  "compounds": [
+   "streptomycin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0000724 (see also BGC0000724)"
+ },
+ "BGC0000718": {
+  "classes": [
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0000724",
+  "closest_score_ratio": 0.982,
+  "compounds": [
+   "streptomycin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000724 (see also BGC0000724)"
+ },
+ "BGC0000726": {
+  "classes": [
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0000725",
+  "closest_score_ratio": 0.689,
+  "compounds": [
+   "alginate"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Low quality entry"
+ },
+ "BGC0000750": {
+  "classes": [
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0000753",
+  "closest_score_ratio": 0.766,
+  "compounds": [
+   "capsular polysaccharide"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Low quality entry"
+ },
+ "BGC0000771": {
+  "classes": [
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0000770",
+  "closest_score_ratio": 0.815,
+  "compounds": [
+   "lipo-oligosaccharide"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Low quality entry"
+ },
+ "BGC0000805": {
+  "classes": [
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0002497",
+  "closest_score_ratio": 0.786,
+  "compounds": [
+   "moenomycin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0000808": {
+  "classes": [
+   "Saccharide"
+  ],
+  "closest_4.0_entry": "BGC0001588",
+  "closest_score_ratio": 0.093,
+  "compounds": [
+   "Cepacian"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "not in MIBiG releases after 1.4; no retirement record in the MIBiG 4.0 metadata"
+ },
+ "BGC0000822": {
+  "classes": [
+   "Alkaloid"
+  ],
+  "closest_4.0_entry": "BGC0000821",
+  "closest_score_ratio": 0.973,
+  "compounds": [
+   "rebeccamycin"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000821 (see also BGC0000821)"
+ },
+ "BGC0000823": {
+  "classes": [
+   "Alkaloid"
+  ],
+  "closest_4.0_entry": "BGC0000821",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "rebeccamycin"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000821 (see also BGC0000821)"
+ },
+ "BGC0000824": {
+  "classes": [
+   "Alkaloid"
+  ],
+  "closest_4.0_entry": "BGC0000668",
+  "closest_score_ratio": 0.18,
+  "compounds": [
+   "Scytonemin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "not in MIBiG releases after 1.4; no retirement record in the MIBiG 4.0 metadata"
+ },
+ "BGC0000828": {
+  "classes": [
+   "Alkaloid"
+  ],
+  "closest_4.0_entry": "BGC0000829",
+  "closest_score_ratio": 0.996,
+  "compounds": [
+   "violacein"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000829 (see also BGC0000829)"
+ },
+ "BGC0000835": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000270",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "simocyclinone"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000270 (see also BGC0000270)"
+ },
+ "BGC0000839": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0000838",
+  "closest_score_ratio": 0.253,
+  "compounds": [
+   "flexirubin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000887": {
+  "classes": [
+   "Alkaloid"
+  ],
+  "closest_4.0_entry": "BGC0000188",
+  "closest_score_ratio": 0.74,
+  "compounds": [
+   "saxitoxin",
+   "gonyautoxin 2",
+   "gonyautoxin 3",
+   "toxin C2",
+   "toxin C3",
+   "gonyautoxin 5",
+   "decarbamoylsaxitoxin",
+   "decarbamoylgonyautoxin 2",
+   "decarbamoylgonyautoxin 3"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0000915": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0003049",
+  "closest_score_ratio": 0.093,
+  "compounds": [
+   "mitomycin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0000928": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0000188",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "T3 toxin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000188 (see also BGC0000188)"
+ },
+ "BGC0000931": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001277",
+  "closest_score_ratio": 0.997,
+  "compounds": [
+   "trichothecene"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000930 (see also BGC0000930)"
+ },
+ "BGC0000952": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001116",
+  "closest_score_ratio": 0.171,
+  "compounds": [
+   "pristinamycin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Cluster split over multiple loci."
+ },
+ "BGC0000962": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002886",
+  "closest_score_ratio": 0.263,
+  "compounds": [
+   "barbamide"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001009": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001010",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "melithiazol A"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001010 (see also BGC0001010)"
+ },
+ "BGC0001068": {
+  "classes": [
+   "Terpene",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000129",
+  "closest_score_ratio": 0.331,
+  "compounds": [
+   "pyripyropene A"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0001081": {
+  "classes": [
+   "Terpene",
+   "Alkaloid"
+  ],
+  "closest_4.0_entry": "BGC0003163",
+  "closest_score_ratio": 0.571,
+  "compounds": [
+   "lolitrem"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Retired in the 2.0 release for unknown reasons"
+ },
+ "BGC0001085": {
+  "classes": [
+   "NRP",
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0000391",
+  "closest_score_ratio": 0.429,
+  "compounds": [
+   "teleocidin B1"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001086": {
+  "classes": [
+   "Saccharide",
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0000634",
+  "closest_score_ratio": 0.438,
+  "compounds": [
+   "astaxanthin dideoxyglycoside"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001087": {
+  "classes": [
+   "Saccharide",
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0000664",
+  "closest_score_ratio": 0.122,
+  "compounds": [
+   "sioxanthin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry split over multiple genomic loci; Coordinates wrong"
+ },
+ "BGC0001092": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001108",
+  "closest_score_ratio": 0.102,
+  "compounds": [
+   "diaphorin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry spread over multipe genomic loci."
+ },
+ "BGC0001096": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000995",
+  "closest_score_ratio": 0.89,
+  "compounds": [
+   "FR901464"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0000995 (see also BGC0000995)"
+ },
+ "BGC0001104": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001025",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "myxovirescin A1"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001025 (see also BGC0001025)"
+ },
+ "BGC0001107": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001299",
+  "closest_score_ratio": 0.029,
+  "compounds": [
+   "patellazole"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Low quality entry"
+ },
+ "BGC0001120": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001368",
+  "closest_score_ratio": 0.023,
+  "compounds": [
+   "burkholderic acid"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001102 (see also BGC0001102)"
+ },
+ "BGC0001121": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000057",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "orsellinic acid"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000057 (see also BGC0000057)"
+ },
+ "BGC0001158": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000030",
+  "closest_score_ratio": 0.926,
+  "compounds": [
+   "bikaverin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001180": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0000383",
+  "closest_score_ratio": 0.493,
+  "compounds": [
+   "isopropylstilbene",
+   "2,5-dialkylresorcinols"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry spread over multiple genomic loci"
+ },
+ "BGC0001182": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002546",
+  "closest_score_ratio": 0.705,
+  "compounds": [
+   "chaetoglobosins"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001191": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0000288",
+  "closest_score_ratio": 0.718,
+  "compounds": [
+   "A-102395"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0001196": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001814",
+  "closest_score_ratio": 0.513,
+  "compounds": [
+   "desotamide"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001208": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0002779",
+  "closest_score_ratio": 0.598,
+  "compounds": [
+   "poaeamide A"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry split over multiple genomic loci"
+ },
+ "BGC0001232": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000028",
+  "closest_score_ratio": 0.839,
+  "compounds": [
+   "leucanicidin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001234": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0002167",
+  "closest_score_ratio": 0.61,
+  "compounds": [
+   "4,4'-piperazine-2,5-diyldimethyl-bis-phenol"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Low quality entry"
+ },
+ "BGC0001236": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001237",
+  "closest_score_ratio": 0.413,
+  "compounds": [
+   "thiotetroamide"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001243": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001784",
+  "closest_score_ratio": 0.02,
+  "compounds": [
+   "botryenalol",
+   "botrydial",
+   "dihydrobotrydial",
+   "botryendial",
+   "beta-O-Methyl-dihydrobotrydialone",
+   "botcinic acid",
+   "botcinin A"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is split over multiple genomic loci"
+ },
+ "BGC0001247": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001541",
+  "closest_score_ratio": 0.872,
+  "compounds": [
+   "cercosporin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001253": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001254",
+  "closest_score_ratio": 0.603,
+  "compounds": [
+   "ACT-Toxin I"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001256": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0002277",
+  "closest_score_ratio": 0.508,
+  "compounds": [
+   "atromentin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001259": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002161",
+  "closest_score_ratio": 0.201,
+  "compounds": [
+   "elsinochrome A"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001263": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0002232",
+  "closest_score_ratio": 0.969,
+  "compounds": [
+   "ergometrine"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001265": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001258",
+  "closest_score_ratio": 0.468,
+  "compounds": [
+   "melanin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001269": {
+  "classes": [
+   "Polyketide",
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001604",
+  "closest_score_ratio": 0.267,
+  "compounds": [
+   "gibberellin A3",
+   "gibberellin A1",
+   "gibberellin A7",
+   "gibberellin A4",
+   "gibberellin A9"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001270": {
+  "classes": [
+   "Polyketide",
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001604",
+  "closest_score_ratio": 0.935,
+  "compounds": [
+   "gibberellin A3",
+   "gibberellin A1",
+   "gibberellin A7",
+   "gibberellin A4",
+   "gibberellin A9"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001271": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000101",
+  "closest_score_ratio": 0.711,
+  "compounds": [
+   "emericellin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is split over multiple genomic loci"
+ },
+ "BGC0001272": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002161",
+  "closest_score_ratio": 0.201,
+  "compounds": [
+   "elsinochrome B",
+   "elsinochrome C"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001259 (see also BGC0001259)"
+ },
+ "BGC0001274": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "non-acetylated open-chain sophorolipid",
+   "diacetylated lactonic sophorolipid"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001279": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001278",
+  "closest_score_ratio": 0.533,
+  "compounds": [
+   "deoxysambucinol",
+   "sambucinol",
+   "roridin E"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001280": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001264",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "betaenone C",
+   "betaenone A"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001264 (see also BGC0001264)"
+ },
+ "BGC0001282": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0000815",
+  "closest_score_ratio": 0.775,
+  "compounds": [
+   "lolitriol"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001308": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001072",
+  "closest_score_ratio": 0.745,
+  "compounds": [
+   "simocyclinone D9",
+   "simocyclinone D10",
+   "simocyclinone D11"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Low quality entry"
+ },
+ "BGC0001309": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002483",
+  "closest_score_ratio": 0.98,
+  "compounds": [
+   "usnic acid"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001319": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0002722",
+  "closest_score_ratio": 0.216,
+  "compounds": [
+   "alpha-tomatine"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Low quality entry"
+ },
+ "BGC0001320": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "alpha-chaconine",
+   "alpha-solanine"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Low quality entry"
+ },
+ "BGC0001323": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001322",
+  "closest_score_ratio": 0.948,
+  "compounds": [
+   "monoterpenes-diterpenes"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": true,
+  "reason": "validation failed"
+ },
+ "BGC0001347": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0002779",
+  "closest_score_ratio": 0.668,
+  "compounds": [
+   "Poaeamide B"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is split over multiple genomic loci"
+ },
+ "BGC0001350": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001032",
+  "closest_score_ratio": 0.144,
+  "compounds": [
+   "phormidolide"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0001352": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001237",
+  "closest_score_ratio": 0.227,
+  "compounds": [
+   "Tu 3010"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001353": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002642",
+  "closest_score_ratio": 0.395,
+  "compounds": [
+   "thiolactomycin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001354": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001237",
+  "closest_score_ratio": 0.403,
+  "compounds": [
+   "U-68204"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001355": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001237",
+  "closest_score_ratio": 0.411,
+  "compounds": [
+   "U-68204"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001359": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001856",
+  "closest_score_ratio": 0.761,
+  "compounds": [
+   "PM100117",
+   "PM100118"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001362": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0000932",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "tropodithietic acid"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000932 (see also BGC0000932)"
+ },
+ "BGC0001378": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001377",
+  "closest_score_ratio": 0.45,
+  "compounds": [
+   "tiancimycin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001382": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0003160",
+  "closest_score_ratio": 0.108,
+  "compounds": [
+   "svaricin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Low quality entry"
+ },
+ "BGC0001385": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001340",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "byssochlamic acid",
+   "agnestadrides"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001340 (see also BGC0001340)"
+ },
+ "BGC0001401": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001923",
+  "closest_score_ratio": 0.434,
+  "compounds": [
+   "melleolide F",
+   "6'-Chloromelleolide F",
+   "6'-Bromomelleolide F"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001402": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0002264",
+  "closest_score_ratio": 0.034,
+  "compounds": [
+   "cyclochlorotine",
+   "hydroxycyclochlorotine A",
+   "cyclotine",
+   "cyclochlorotine B",
+   "deoxy-Cyclochlorotine"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001436": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002222",
+  "closest_score_ratio": 0.203,
+  "compounds": [
+   "cornexistin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1); listed as active again in MIBiG 5.0rc1"
+ },
+ "BGC0001450": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0002615",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "macrophorin A",
+   "4'-oxomacrophorin A",
+   "4'-oxomacrophorin D",
+   "4'-oxomacrophorin E"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001466": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001954",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "Wortmanamide"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001476": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0000283",
+  "closest_score_ratio": 0.27,
+  "compounds": [
+   "pseudouridimycin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001479": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0000302",
+  "closest_score_ratio": 0.683,
+  "compounds": [
+   "anabaenopeptin NZ857",
+   "nostamide A"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001482": {
+  "classes": [],
+  "closest_4.0_entry": "BGC0001483",
+  "closest_score_ratio": 1.0,
+  "compounds": [],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "not in MIBiG releases after 1.4; no retirement record in the MIBiG 4.0 metadata"
+ },
+ "BGC0001487": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001008",
+  "closest_score_ratio": 0.11,
+  "compounds": [
+   "3,7-dihydroxytropolone"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001494": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0000864",
+  "closest_score_ratio": 0.028,
+  "compounds": [
+   "acinetodin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0001497": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001442",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "actinonin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001442 (see also BGC0001442)"
+ },
+ "BGC0001530": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001468",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "bicyclomycin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001468 (see also BGC0001468)"
+ },
+ "BGC0001538": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001444",
+  "closest_score_ratio": 0.881,
+  "compounds": [
+   "caboxamycin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001444 (see also BGC0001444)"
+ },
+ "BGC0001546": {
+  "classes": [
+   "Alkaloid"
+  ],
+  "closest_4.0_entry": "BGC0001485",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "chuangxinmycin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001485 (see also BGC0001485)"
+ },
+ "BGC0001557": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002222",
+  "closest_score_ratio": 0.203,
+  "compounds": [
+   "cornexistin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001436 (see also BGC0001436)"
+ },
+ "BGC0001559": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0002962",
+  "closest_score_ratio": 0.079,
+  "compounds": [
+   "crocagin A",
+   "crocagin B"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0001577": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0001576",
+  "closest_score_ratio": 0.972,
+  "compounds": [
+   "divamide B"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": true,
+  "reason": "validation failed"
+ },
+ "BGC0001581": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000052",
+  "closest_score_ratio": 0.952,
+  "compounds": [
+   "ECO-02301"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Low quality entry"
+ },
+ "BGC0001583": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001886",
+  "closest_score_ratio": 0.547,
+  "compounds": [
+   "emodin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001598": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001065",
+  "closest_score_ratio": 0.06,
+  "compounds": [
+   "foxicin A",
+   "foxicin B",
+   "foxicin C",
+   "foxicin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001599": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "fragin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001613": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001278",
+  "closest_score_ratio": 0.327,
+  "compounds": [
+   "harzianum B"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001614": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0000369",
+  "closest_score_ratio": 0.661,
+  "compounds": [
+   "hassallidin E"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001643": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000123",
+  "closest_score_ratio": 0.861,
+  "compounds": [
+   "lactomycins A-C"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001646": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002810",
+  "closest_score_ratio": 0.024,
+  "compounds": [
+   "lagriamide"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001664": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001595",
+  "closest_score_ratio": 0.405,
+  "compounds": [
+   "merosterol"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001669": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0000528",
+  "closest_score_ratio": 0.157,
+  "compounds": [
+   "microvionin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001673": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0001539",
+  "closest_score_ratio": 0.98,
+  "compounds": [
+   "moomysin"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001539 (see also BGC0001539)"
+ },
+ "BGC0001676": {
+  "classes": [
+   "Alkaloid"
+  ],
+  "closest_4.0_entry": "BGC0002443",
+  "closest_score_ratio": 0.738,
+  "compounds": [
+   "mycemycin A",
+   "mycemycin B",
+   "mycemycin C",
+   "mycemycin D",
+   "mycemycin E"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001678": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "mycosporine-like amino acids (MAAs)"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001686": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "N-octanoyl-Met-Phe-H"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001688": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001591",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "N-tetradecanoyl tyrosine"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001591 (see also BGC0001591)"
+ },
+ "BGC0001689": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0003029",
+  "closest_score_ratio": 0.542,
+  "compounds": [
+   "naphthgeranine A"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Missing literature reference"
+ },
+ "BGC0001691": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "nectrisine"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Reference sequence contains only a single gene"
+ },
+ "BGC0001697": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002729",
+  "closest_score_ratio": 0.582,
+  "compounds": [
+   "neurosporin A"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "pubmed:30908040 hints that this locus produces sordarial, covered by BGC0002729 (see also BGC0002729)"
+ },
+ "BGC0001698": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001434",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "nevaltophin A",
+   "nevaltophin B",
+   "nevaltophin C",
+   "nevaltophin D"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001434 (see also BGC0001434)"
+ },
+ "BGC0001710": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001437",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "obafluorin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001437 (see also BGC0001437)"
+ },
+ "BGC0001714": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001662",
+  "closest_score_ratio": 0.307,
+  "compounds": [
+   "octacosamicin"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Entry is spread over multiple contigs"
+ },
+ "BGC0001730": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000279",
+  "closest_score_ratio": 0.202,
+  "compounds": [
+   "paramagnetoquinone 1",
+   "paramagnetoquinone 2"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001734": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0001281",
+  "closest_score_ratio": 0.018,
+  "compounds": [
+   "penilumamide"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "GenBank sequence is retracted due to reason:unconfirmed sequence"
+ },
+ "BGC0001745": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0001733",
+  "closest_score_ratio": 0.224,
+  "compounds": [
+   "PlpA1",
+   "PlpA2",
+   "PlpA3"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0001754": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001363",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "ralsolamycin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001363 (see also BGC0001363)"
+ },
+ "BGC0001766": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001230",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "salinamide A"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001230 (see also BGC0001230)"
+ },
+ "BGC0001767": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0002466",
+  "closest_score_ratio": 0.705,
+  "compounds": [
+   "salinichelins"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0001777": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001260",
+  "closest_score_ratio": 0.52,
+  "compounds": [
+   "shearinine D"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001798": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001666",
+  "closest_score_ratio": 0.261,
+  "compounds": [
+   "tetrapetalone A",
+   "tetrapetalone B",
+   "tetrapetalone C",
+   "tetrapetalone D"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": false,
+  "reason": "Missing literature reference"
+ },
+ "BGC0001803": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0000625",
+  "closest_score_ratio": 0.646,
+  "compounds": [
+   "thioviridamide"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0000625 (see also BGC0000625)"
+ },
+ "BGC0001804": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001377",
+  "closest_score_ratio": 0.45,
+  "compounds": [
+   "tiancimycin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001378 (see also BGC0001378)"
+ },
+ "BGC0001805": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0000446",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "tilivalline"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000446 (see also BGC0000446)"
+ },
+ "BGC0001815": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001377",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "uncialamycin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001377 (see also BGC0001377)"
+ },
+ "BGC0001821": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001820",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "verticillins"
+  ],
+  "last_release": "1.4",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001820 (see also BGC0001820)"
+ },
+ "BGC0001829": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000345",
+  "closest_score_ratio": 0.807,
+  "compounds": [
+   "\u03b1,\u03b2-epoxyketone"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001837": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001031",
+  "closest_score_ratio": 0.15,
+  "compounds": [
+   "leptolyngbyalide"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0001883": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "porphyra-334"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001678 (see also BGC0001678)"
+ },
+ "BGC0001892": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001784",
+  "closest_score_ratio": 0.01,
+  "compounds": [
+   "botcinic acid"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001893": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001899",
+  "closest_score_ratio": 0.479,
+  "compounds": [
+   "abscisic acid"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0001898": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001140",
+  "closest_score_ratio": 0.889,
+  "compounds": [
+   "thioplatensimycin",
+   "thioplatencin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001140 (see also BGC0001140)"
+ },
+ "BGC0001900": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "fragin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001599 (see also BGC0001599)"
+ },
+ "BGC0001901": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001854",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "tricholignan A"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001854 (see also BGC0001854)"
+ },
+ "BGC0001908": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001770",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "sceliphrolactam"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001770 (see also BGC0001770)"
+ },
+ "BGC0001912": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001818",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "(2S,6R)-diamino-(5R,7)-dihydroxy-heptanoic acid"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001818 (see also BGC0001818)"
+ },
+ "BGC0001914": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001529",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "benzastatin J",
+   "7-hydroxyl benzastatin B",
+   "7-hydroxyl O-demethylbenzastatin A",
+   "JBIR-67",
+   "7-hydroxyl benzastatin F",
+   "7-hydroxyl O-demethylbenzastatin D",
+   "O-demethylvirantmycin",
+   "7-hydroxyl benzastatin D",
+   "virantmycin",
+   "benzastatin K",
+   "methylbenzastatin K"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001529 (see also BGC0001529)"
+ },
+ "BGC0001915": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001528",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "betaestacin I",
+   "betaestacin II"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001528 (see also BGC0001528)"
+ },
+ "BGC0001916": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001649",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "lavendiol"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001649 (see also BGC0001649)"
+ },
+ "BGC0001921": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0002986",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "MS-271"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001920 (see also BGC0001920)"
+ },
+ "BGC0001930": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0001862",
+  "closest_score_ratio": 0.999,
+  "compounds": [
+   "pallidocin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001862 (see also BGC0001862)"
+ },
+ "BGC0001932": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001662",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "mediomiycin A"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001662 (see also BGC0001662)"
+ },
+ "BGC0001933": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0001505",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "sphaerocyclamide"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001505 (see also BGC0001505)"
+ },
+ "BGC0001934": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002022",
+  "closest_score_ratio": 0.993,
+  "compounds": [
+   "armeniaspirols"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": true,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001935": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001008",
+  "closest_score_ratio": 0.11,
+  "compounds": [
+   "3,7-dihydroxytropolone"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001487 (see also BGC0001487)"
+ },
+ "BGC0001936": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001706",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "nodulisporic acid F"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001706 (see also BGC0001706)"
+ },
+ "BGC0001938": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001186",
+  "closest_score_ratio": 0.995,
+  "compounds": [
+   "entotheonella"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": true,
+  "reason": "validation failed"
+ },
+ "BGC0001939": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001784",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "streptoseomycin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001784 (see also BGC0001784)"
+ },
+ "BGC0001943": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001822",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "vioprolides A",
+   "vioprolides B",
+   "vioprolides C",
+   "vioprolides D"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001822 (see also BGC0001822)"
+ },
+ "BGC0001946": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002810",
+  "closest_score_ratio": 0.024,
+  "compounds": [
+   "lagriamide"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001646 (see also BGC0001646)"
+ },
+ "BGC0001949": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001974",
+  "closest_score_ratio": 0.312,
+  "compounds": [
+   "domoic acid"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001958": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001957",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "amipurimycin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001957 (see also BGC0001957)"
+ },
+ "BGC0001961": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0002288",
+  "closest_score_ratio": 0.863,
+  "compounds": [
+   "ashimides"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0002288 (see also BGC0002288)"
+ },
+ "BGC0001973": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001972",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "fervenulin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001972 (see also BGC0001972)"
+ },
+ "BGC0001977": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001976",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "eupenifeldin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001976 (see also BGC0001976)"
+ },
+ "BGC0001978": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001857",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "burnettramic acid"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001857 (see also BGC0001857)"
+ },
+ "BGC0001982": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001881",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "pyrichalasin H"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001881 (see also BGC0001881)"
+ },
+ "BGC0001990": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0000010",
+  "closest_score_ratio": 0.065,
+  "compounds": [
+   "BU-4704",
+   "xanthocillin-X monomethylether",
+   "melanocin E",
+   "melanocin F",
+   "fumiformamide"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0001993": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001728",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "paenilipoheptin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001728 (see also BGC0001728)"
+ },
+ "BGC0002003": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001608",
+  "closest_score_ratio": 0.998,
+  "compounds": [
+   "glidopeptin A"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001608 (see also BGC0001608)"
+ },
+ "BGC0002016": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002477",
+  "closest_score_ratio": 0.532,
+  "compounds": [
+   "lugdunomycin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002023": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0001471",
+  "closest_score_ratio": 0.929,
+  "compounds": [
+   "saalfelduracin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001471 (see also BGC0001471)"
+ },
+ "BGC0002027": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0001486",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "TglA-thiaGlu"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001486 (see also BGC0001486)"
+ },
+ "BGC0002029": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001592",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "bagremycin A",
+   "bagremycin B",
+   "bagremycin C",
+   "bagremycin E",
+   "bagremycin F",
+   "bagremycin G",
+   "ferroverdin A",
+   "ferroverdin B",
+   "ferroverdin C"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001592 (see also BGC0001592)"
+ },
+ "BGC0002030": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001866",
+  "closest_score_ratio": 0.78,
+  "compounds": [
+   "viriditoxin"
+  ],
+  "last_release": "2.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001866 (see also BGC0001866)"
+ },
+ "BGC0002041": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001985",
+  "closest_score_ratio": 0.799,
+  "compounds": [
+   "pyrazofurin A"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0001985 (see also BGC0001985)"
+ },
+ "BGC0002061": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001028",
+  "closest_score_ratio": 0.85,
+  "compounds": [
+   "nostopeptolide A1",
+   "nostopeptolide 1052"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002069": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0000186",
+  "closest_score_ratio": 0.162,
+  "compounds": [
+   "styrolide A",
+   "styrolide B"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002076": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "4,5-didehydroacaterin",
+   "acaterin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002094": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001994",
+  "closest_score_ratio": 0.98,
+  "compounds": [
+   "B-ethynylserine"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001994 (see also BGC0001994)"
+ },
+ "BGC0002105": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002333",
+  "closest_score_ratio": 0.862,
+  "compounds": [
+   "lucensomycin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002116": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0002442",
+  "closest_score_ratio": 0.057,
+  "compounds": [
+   "darobactin A"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "listed as 'active' in the MIBiG 4.0 metadata, but missing from the MIBiG 4.0 protein FASTA; listed as active again in MIBiG 5.0rc1"
+ },
+ "BGC0002160": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001372",
+  "closest_score_ratio": 0.021,
+  "compounds": [
+   "aspergillicin A",
+   "aspergillicin F",
+   "aspergillicin G"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002166": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0002164",
+  "closest_score_ratio": 0.524,
+  "compounds": [
+   "peramine",
+   "intermediate 1",
+   "intermediate 2"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002178": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001724",
+  "closest_score_ratio": 0.023,
+  "compounds": [
+   "gramillin A",
+   "gramillin B"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002217": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001571",
+  "closest_score_ratio": 0.063,
+  "compounds": [
+   "HEx-tc3 terpene"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002223": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002222",
+  "closest_score_ratio": 0.549,
+  "compounds": [
+   "scytalidin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002224": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002222",
+  "closest_score_ratio": 0.9,
+  "compounds": [
+   "zopfiellin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": true,
+  "reason": "validation failed; listed as active again in MIBiG 5.0rc1"
+ },
+ "BGC0002292": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001985",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "pyrazofurin"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0001985 (see also BGC0001985)"
+ },
+ "BGC0002325": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0000571",
+  "closest_score_ratio": 0.709,
+  "compounds": [
+   "mycetohabin-16"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002353": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0000611",
+  "closest_score_ratio": 0.377,
+  "compounds": [
+   "sch40832",
+   "Sch 40832"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002380": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0000592",
+  "closest_score_ratio": 0.831,
+  "compounds": [
+   "microviridin 1777"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002388": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0000672",
+  "closest_score_ratio": 0.817,
+  "compounds": [
+   "oryzalides",
+   "phytocassanes"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": false,
+  "reason": "Duplicate of BGC0000672 (see also BGC0000672)"
+ },
+ "BGC0002389": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "\u03b2-bisabolene",
+   "\u03b2-macrocarpene"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002396": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "tanshinones"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002399": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001756",
+  "closest_score_ratio": 0.842,
+  "compounds": [
+   "caprutriene"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002428": {
+  "classes": [
+   "Terpene",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": null,
+  "closest_score_ratio": 0.0,
+  "compounds": [
+   "DDP-13",
+   "DDP-14"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002437": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001532",
+  "closest_score_ratio": 0.429,
+  "compounds": [
+   "thermoactinoamide A"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002444": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001706",
+  "closest_score_ratio": 0.695,
+  "compounds": [
+   "epoxy-Janthitrems"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002457": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0002536",
+  "closest_score_ratio": 0.662,
+  "compounds": [
+   "alazopeptin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002463": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0000943",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "staphyloferrin B"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000943 (see also BGC0000943)"
+ },
+ "BGC0002486": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0000480",
+  "closest_score_ratio": 0.705,
+  "compounds": [
+   "tolypamide"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002566": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0002568",
+  "closest_score_ratio": 0.431,
+  "compounds": [
+   "[S,S]-EDDS"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002585": {
+  "classes": [
+   "Other"
+  ],
+  "closest_4.0_entry": "BGC0001602",
+  "closest_score_ratio": 0.161,
+  "compounds": [
+   "ubericin K"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002590": {
+  "classes": [
+   "NRPS",
+   "PKS"
+  ],
+  "closest_4.0_entry": "BGC0002100",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "colibromycin A",
+   "colibromycin B",
+   "colibromycin C"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0002100 (see also BGC0002100)"
+ },
+ "BGC0002618": {
+  "classes": [
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0001375",
+  "closest_score_ratio": 0.155,
+  "compounds": [
+   "penitremane"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002624": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0001884",
+  "closest_score_ratio": 0.314,
+  "compounds": [
+   "fischerazole A",
+   "fischerazole B",
+   "fischerazole C"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002627": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0002699",
+  "closest_score_ratio": 0.073,
+  "compounds": [
+   "kamptornamide"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002630": {
+  "classes": [
+   "RiPP"
+  ],
+  "closest_4.0_entry": "BGC0002005",
+  "closest_score_ratio": 0.232,
+  "compounds": [
+   "thatisin"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002632": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0003044",
+  "closest_score_ratio": 0.708,
+  "compounds": [
+   "varlaxin 1046A",
+   "varlaxin 1022A"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002636": {
+  "classes": [
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0002010",
+  "closest_score_ratio": 0.603,
+  "compounds": [
+   "streptophenazine 1",
+   "streptophenazine 2"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002647": {
+  "classes": [
+   "Alkaloid"
+  ],
+  "closest_4.0_entry": "BGC0000380",
+  "closest_score_ratio": 0.125,
+  "compounds": [
+   "massinidine"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "not in MIBiG 4.0; no retirement record in the MIBiG 4.0 metadata (it was 'active' in 3.1)"
+ },
+ "BGC0002662": {
+  "classes": [
+   "NRP"
+  ],
+  "closest_4.0_entry": "BGC0001370",
+  "closest_score_ratio": 0.03,
+  "compounds": [
+   "petrichorin A",
+   "petrichorin B"
+  ],
+  "last_release": "3.1",
+  "near_duplicate": false,
+  "reason": "validation failed"
+ },
+ "BGC0002714": {
+  "classes": [
+   "NRP",
+   "Polyketide"
+  ],
+  "closest_4.0_entry": "BGC0000383",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "luminmycin A",
+   "glidobactin A",
+   "cepafungin"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0000383 (see also BGC0000383)"
+ },
+ "BGC0002728": {
+  "classes": [
+   "NRP",
+   "Terpene"
+  ],
+  "closest_4.0_entry": "BGC0002225",
+  "closest_score_ratio": 1.0,
+  "compounds": [
+   "aculene A",
+   "aculene B",
+   "aculene C",
+   "aculene D"
+  ],
+  "last_release": "3.0",
+  "near_duplicate": true,
+  "reason": "Duplicate of BGC0002225 (see also BGC0002225)"
+ }
+}
