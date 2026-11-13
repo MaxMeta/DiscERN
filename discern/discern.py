@@ -2,10 +2,12 @@
 import argparse
 import pathlib
 import pickle
-from .funcs_2 import *         
-from .vector_tools import * 
+import sys
+from .funcs_2 import *
+from .vector_tools import *
 from .polymer_tools import *
 from .low_n_mode import run_low_n_search
+from .custom_refs import CustomReferenceError, load_custom_references
 
 #should work with AntiSMASH < 7 if corresponding mibig ref files provided ... todo
 
@@ -185,44 +187,14 @@ def main():
             mibig_exclude = set(mibig_exclude.split())
 
     if os.path.isdir(ref_set):
-        
-        ref_set_bs=glob.glob(os.path.join(ref_set,"*.gbk"))     
-        ref_set_cb=glob.glob(os.path.join(ref_set,"*.txt"))    
-
-        ref_set_pol=glob.glob(os.path.join(ref_set,"*.json"))
-        
-        if not len(ref_set_bs)==len(ref_set_cb):
-            print("number of referenceknownclusterblast text files and gbk files not equal")
-            return 
-            
-        if args.poly_search:
-            if not len(ref_set_bs)==len(ref_set_pol):
-                print("number of json text files and gbk files not equal")
-                return
-
-        ref_labels=[os.path.split(i)[-1].rsplit(".",1)[0] for i in ref_set_bs]
-        
-        ref_bs_vecs=make_sparse_dict(ref_set_bs,db_dir,num_cpus=num_cpus,
-                                     glob_pattern="*.gbk")        
-        ref_bs_vecs_rf={os.path.split(key)[-1].rsplit(".",1)[0]:ref_bs_vecs[key]\
-                        for key in ref_bs_vecs}
-        ref_bs_vecs=ref_bs_vecs_rf
-        
-        ref_cb_vecs=parse_cb_outputs(ref_set_cb,glob_pattern="*.txt")
-        ref_cb_vecs_rf={os.path.split(key)[-1].rsplit(".",1)[0]:ref_cb_vecs[key]\
-                        for key in ref_cb_vecs}
-        ref_cb_vecs=ref_cb_vecs_rf
-        
-        ref_pol_vecs=make_polymer_dict(ref_set_pol,glob_pattern="*.json",as6=as6)
-        ref_pol_vecs_rf={os.path.split(key)[-1].rsplit(".",1)[0]:ref_pol_vecs[key]\
-                        for key in ref_pol_vecs}
-        ref_pol_vecs=ref_pol_vecs_rf
-        
-        if mibig_exclude and mibig_exclude != 'self':
-            for key in ref_cb_vecs:#delete  excluded BGCs from ref cb vecs
-                for bgc in mibig_exclude:
-                    if bgc in ref_cb_vecs[key]:
-                        del ref_cb_vecs[key][bgc]
+        try:
+            (ref_labels, ref_gbk_paths, ref_bs_vecs,
+             ref_cb_vecs, ref_pol_vecs) = load_custom_references(
+                ref_set, db_dir, num_cpus=num_cpus,
+                poly_search=args.poly_search, as6=as6,
+                mibig_exclude=mibig_exclude)
+        except CustomReferenceError as e:
+            sys.exit(f"Error: {e}")
         ref_set=ref_labels
         ref_dir=True
 
