@@ -431,7 +431,11 @@ def main():
                   )
         
 
-    if vec_check:
+    if vec_check and len(ref_set) < 2:
+        # analyse_vector_collections needs two or more references
+        print("skipping vec_check: it needs at least two reference BGCs")
+
+    elif vec_check:
 
         chk_cb=analyse_vector_collections(ref_set,mibig_vecs_cb)
         chk_bs=analyse_vector_collections(ref_set,mibig_vecs_bs)
@@ -451,6 +455,19 @@ def main():
 
         with open(os.path.join(output_dir,'bigslice_vec_check.json'),'w') as F:
             json.dump(chk_bs_to_save,F,indent=4)
+
+        if ref_dir:
+            # MIBiG members of the family stay in the background set and
+            # count as negatives when the thresholds are trained.
+            close_mibig=sorted({bgc for bgc,_ in chk_cb['close_other_vectors']}|
+                               {bgc for bgc,_ in chk_bs['close_other_vectors']})
+            if close_mibig:
+                print("MIBiG BGCs close to the custom reference centroid "
+                      "(other_close_mibig_bgcs in blast_vec_check.json / "
+                      f"bigslice_vec_check.json): {' '.join(close_mibig)}")
+                print("If any of these belong to the family, they were counted as negatives "
+                      "when the thresholds were trained; consider re-running with "
+                      "-x \"<their IDs>\" to exclude them from the background set.")
 
     print("writing hit lists to file...")
 
