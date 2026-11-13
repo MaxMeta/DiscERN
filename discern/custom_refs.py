@@ -18,6 +18,37 @@ class CustomReferenceError(ValueError):
     """A custom reference directory cannot be used as given."""
 
 
+def max_achievable_k(custom_refs, poly_search):
+    """
+    The highest algorithm support (k) a hit can reach in this run:
+    pfam-vec and blast-vec, plus BLAST-rank with MIBiG references (custom
+    references never appear in each other's KnownClusterBlast results, so
+    BLAST-rank cannot run), plus the polymer method with --poly_search.
+    """
+    return (2 if custom_refs else 3) + (1 if poly_search else 0)
+
+
+def cap_min_k(min_k, custom_refs, poly_search):
+    """Return (min_k to use for the trees, max achievable k)."""
+    max_k = max_achievable_k(custom_refs, poly_search)
+    return min(min_k, max_k), max_k
+
+
+def custom_mode_notice(poly_search):
+    """Text printed at the start of a custom-reference run."""
+    max_k = max_achievable_k(True, poly_search)
+    methods = "pfam-vec, blast-vec, polymer" if poly_search else "pfam-vec, blast-vec"
+    return (
+        "Custom reference mode:\n"
+        "  - BLAST-rank (ol_hits) is unavailable: custom references never appear in each "
+        "other's KnownClusterBlast results.\n"
+        f"  - The maximum algorithm support is therefore k={max_k} ({methods}), against "
+        f"k={max_achievable_k(False, poly_search)} with MIBiG references.\n"
+        "  - The README's k>=3 precision figure was benchmarked with MIBiG references "
+        "and does not apply here."
+    )
+
+
 def file_stem(path):
     """Return the file name without its last extension ('d/x.region001.gbk' -> 'x.region001')."""
     return os.path.basename(path).rsplit(".", 1)[0]

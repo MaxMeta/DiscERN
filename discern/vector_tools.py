@@ -617,7 +617,13 @@ def make_trees(out_folder_path,
     make tree files from hits and references using list returned by
     get_vecs_for_trees
     """
-    
+
+    n_items = len(vecs_to_use) + len(refs)
+    if n_items < 2:
+        print(f"skipping tree building: need at least 2 BGCs (hits + references) "
+              f"to cluster, found {n_items}")
+        return
+
     cb_ax=None
     cb_mat=None
     bs_ax=None

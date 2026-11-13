@@ -7,7 +7,8 @@ from .funcs_2 import *
 from .vector_tools import *
 from .polymer_tools import *
 from .low_n_mode import run_low_n_search
-from .custom_refs import CustomReferenceError, load_custom_references
+from .custom_refs import (CustomReferenceError, cap_min_k, custom_mode_notice,
+                          load_custom_references)
 
 #should work with AntiSMASH < 7 if corresponding mibig ref files provided ... todo
 
@@ -187,6 +188,7 @@ def main():
             mibig_exclude = set(mibig_exclude.split())
 
     if os.path.isdir(ref_set):
+        print(custom_mode_notice(args.poly_search))
         try:
             (ref_labels, ref_gbk_paths, ref_bs_vecs,
              ref_cb_vecs, ref_pol_vecs) = load_custom_references(
@@ -208,7 +210,12 @@ def main():
     
     else:
         ref_set = set(ref_set.split())
-    
+
+    tree_min_k, max_k = cap_min_k(args.min_k, ref_dir, args.poly_search)
+    if tree_min_k < args.min_k:
+        print(f"note: --min_k {args.min_k} is above the maximum support a hit can reach "
+              f"in this run (k={max_k}); using --min_k {tree_min_k} for the trees")
+
     print('loading data...')
 
     with open(feature_dict_file) as F:
@@ -414,7 +421,7 @@ def main():
 
         print(poly_dict.keys())
 
-        vecs_to_use=get_vecs_for_trees(passing_hits_by_k,args.min_k)
+        vecs_to_use=get_vecs_for_trees(passing_hits_by_k,tree_min_k)
         
         make_trees(output_dir,vecs_to_use,ref_set,
                    bs_vecs,cb_vecs,
