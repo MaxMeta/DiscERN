@@ -34,6 +34,8 @@ setuptools.setup(
             'data/*.json', # Include all .json files in discern/data/
             'data/*.tsv',  # Include all .tsv files in discern/data/
             'data/*.pkl',  # Include all .pkl files in discern/data/
+            'data/*.json.gz',  # rebuilt MIBiG vectors for --cb_source diamond
+            'data/*.md',
         ]
     },
 
@@ -52,6 +54,7 @@ setuptools.setup(
     entry_points={
         'console_scripts': [
             'discern=discern.discern:main', 
+            'discern-setup-mibig=discern.mibig_db:setup_main',
         ],
     },
 
