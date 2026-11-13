@@ -12,6 +12,7 @@
     *   [The DiscERN Workflow](#the-discern-workflow)
 *   [Usage](#usage)
     *   [Command-Line Arguments](#command-line-arguments)
+    *   [Custom Reference BGCs](#custom-reference-bgcs)
 *   [Example Walkthrough](#example-walkthrough)
 *   [Interpreting the Output](#interpreting-the-output)
     *   [Primary Hit Files](#primary-hit-files)
@@ -165,7 +166,7 @@ discern -a <antismash_directory> -o <output_directory> -r <reference_bgcs> [OPTI
 *   `-r`, `--reference_bgcs`: Defines the BGC family to expand. This can be provided in three ways:
     1.  **MIBiG IDs (string)**: A space-separated string of MIBiG accession numbers (e.g., `"BGC0000306 BGC0000330"`).
     2.  **MIBiG IDs (file)**: Path to a text file containing one MIBiG accession number per line.
-    3.  **Custom Directory**: Path to a directory containing your own reference BGCs, formatted as antiSMASH outputs (including `.gbk`, `.json`, and the `knownclusterblast` text files). This is for using non-MIBiG BGCs as a reference.
+    3.  **Custom Directory**: Path to a directory of your own reference BGCs (`<name>.gbk`, `<name>.txt` and, for `--poly_search`, `<name>.json`), for using non-MIBiG BGCs as references. See [Custom Reference BGCs](#custom-reference-bgcs) for how to prepare it and what this mode can't do.
 
 #### **Common Options:**
 *   `-c`, `--num_cpus`: Number of CPUs to use for parallel processing. (Default: all available physical cores).
@@ -175,9 +176,9 @@ discern -a <antismash_directory> -o <output_directory> -r <reference_bgcs> [OPTI
 *   `--as6`: Flag to indicate that the antiSMASH outputs were generated with antiSMASH version 6. This adjusts the parsing logic for polymer predictions.
 
 #### **Advanced Options:**
-*   `-k`, `--min_k`: The minimum algorithm support score (`k`) required for a hit to be included in the output hierarchical clustering trees. (Default: 3).
+*   `-k`, `--min_k`: The minimum algorithm support score (`k`) required for a hit to be included in the output hierarchical clustering trees. (Default: 3). If this is above the highest `k` a hit can reach in the run (3, or 4 with `--poly_search`; 2, or 3 with `--poly_search`, for a custom reference directory), that maximum is used instead.
 *   `-b`, `--beta`: Use the F-beta score instead of the Matthews Correlation Coefficient (MCC) for training the classification models. You must provide a beta value (e.g., `-b 1.0` for the F1-score).
-*   `-x`, `--mibig_exclude`: Exclude specific MIBiG BGCs from the background reference database during analysis. Can be a space-separated string of IDs, a file with one ID per line, or the keyword `self` to automatically exclude the reference BGCs themselves from the background set.
+*   `-x`, `--mibig_exclude`: Exclude specific MIBiG BGCs from the background reference database during analysis. Can be a space-separated string of IDs, a file with one ID per line, or the keyword `self` to automatically exclude the reference BGCs themselves from the background set (`self` only works with MIBiG references and is ignored for a custom reference directory).
 *   `--bigslice_cutoff`, `--clusterblast_cutoff`: Manually set the cosine distance cutoffs for the `pfam-vec` and `blast-vec` methods, respectively. This overrides the automatically determined thresholds.
 *   `--vec_check`: Perform a check on the reference BGC collection for internal consistency and identify other MIBiG BGCs that are closely related. (Default: True).
 *   `--hclust`: Generate hierarchical clustering dendrograms and a combined Newick tree for high-confidence hits. (Default: True).
@@ -233,6 +234,51 @@ antismash_runs/
     ├── CP003885.1.region001.gbk
     └── ... (all antiSMASH files for this genome)
 ```
+
+### Custom Reference BGCs
+
+Instead of MIBiG accessions, `-r` can point to a directory of your own reference BGCs, for example family members that are not in MIBiG.
+
+**What each reference needs.** Three antiSMASH output files that share one base name, `<name>`:
+
+| File | Source | Needed |
+|---|---|---|
+| `<name>.gbk` | The antiSMASH **region** GenBank file, `<record>.region001.gbk`. Not the whole-record `<record>.gbk`. | Always |
+| `<name>.txt` | The KnownClusterBlast output for that region, `knownclusterblast/<record>_c1.txt`. antiSMASH only writes this when run with `--cb-knownclusters`. | Always |
+| `<name>.json` | The antiSMASH JSON, `<record>.json`. | With `--poly_search` |
+
+If a file is missing or the names don't match, DiscERN stops before the analysis and lists the unmatched files.
+
+**How to make them.** Run antiSMASH with `--cb-knownclusters` on the GenBank file of each reference BGC, then copy and rename the outputs. Use one reference BGC per GenBank file, so that each JSON describes one BGC (if a JSON contains several NRPS/PKS regions, DiscERN merges them into one reference and prints a warning).
+
+```bash
+antismash --cb-knownclusters --output-dir as_ref1 ref1.gbk
+
+mkdir -p my_refs
+cp as_ref1/<record>.region001.gbk            my_refs/ref1.gbk
+cp as_ref1/knownclusterblast/<record>_c1.txt my_refs/ref1.txt
+cp as_ref1/<record>.json                     my_refs/ref1.json   # only needed for --poly_search
+```
+
+Here `<record>` is the record ID antiSMASH gives the input sequence. If antiSMASH finds more than one region, use the `regionNNN.gbk` and `_cN.txt` files of the BGC you want.
+
+**Limits.**
+*   BLAST-rank (`ol_hits`) is unavailable, because custom references never appear in each other's KnownClusterBlast results. The maximum support is therefore k=2 (pfam-vec and blast-vec), or k=3 with `--poly_search`, and `--min_k` is capped to that maximum. DiscERN prints a notice saying this at the start of the run.
+*   The k≥3 precision figure under [Primary Hit Files](#primary-hit-files) was benchmarked with MIBiG references and does not apply here.
+*   Use at least two references. With a single reference the trained distance thresholds collapse to 0 and `--vec_check` is skipped.
+
+**Exclusions.** If the family already has members in MIBiG, they stay in the background set and count as negatives when the pfam-vec, blast-vec and polymer thresholds are trained, which makes the thresholds tighter. Exclude them with `-x` and explicit MIBiG IDs. To find candidates, check `other_close_mibig_bgcs` in `blast_vec_check.json` and `bigslice_vec_check.json`; DiscERN also prints these BGCs at the end of a custom-reference run. `-x self` is ignored in this mode.
+
+**Example.** Using four calcium-dependent antibiotic (CDA) BGCs re-run through antiSMASH as custom references, and excluding their MIBiG entries from the background:
+
+```bash
+discern -a ~/discern_test/inputs \
+-o ~/discern_test/custom_cda_output \
+-r ~/my_cda_refs \
+-x "BGC0000315 BGC0000336 BGC0000354 BGC0000439" \
+--poly_search
+```
+
 ## Example Walkthrough
 Let's find new members of the calcium-dependent lipopeptide (CDA) family from a set of actinomycete genomes that have already been run through antiSMASH.
 
