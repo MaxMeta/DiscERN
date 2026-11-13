@@ -306,9 +306,17 @@ def main():
 
 
 
-    print('finding conserved features from mibig vecs')
-    conserved_features=flatten_nested_dict(analyse_mibig_set(ref_set, mibig_counts))
-    #print(conserved_features)   
+    if ref_dir:
+        print('finding conserved features in the custom reference gbk files')
+        conserved_features=flatten_nested_dict(analyse_genbank_set(ref_gbk_paths, feature_dict))
+    else:
+        print('finding conserved features from mibig vecs')
+        conserved_features=flatten_nested_dict(analyse_mibig_set(ref_set, mibig_counts))
+    print(f'found {len(conserved_features)} conserved features')
+    if not conserved_features:
+        print("warning: no features are conserved across all reference BGCs, "
+              "so the domain filter will pass every hit")
+    #print(conserved_features)
 
     
     if low_n:
