@@ -45,7 +45,7 @@ def run_low_n_search(
 
     #Find the top polymer hit for every query BGC ---
     print("Determining top polymer hit for all query BGCs...")
-    top_polymer_matches_raw = get_polymer_matches(poly_dict, mibig_vecs_pol)
+    top_polymer_matches_raw = get_polymer_matches(poly_dict, mibig_vecs_pol, ref_set)
     
     top_polymer_hits = {}
     for polymer_key, (score, top_hit) in top_polymer_matches_raw.items():

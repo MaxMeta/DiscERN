@@ -542,7 +542,7 @@ def main():
 
     if args.poly_search:
         print('finding polymer matches')    
-        pol_matches=get_polymer_matches(poly_dict,mibig_vecs_pol)
+        pol_matches=get_polymer_matches(poly_dict,mibig_vecs_pol,ref_set)
  
         stats=get_polymer_stats(mibig_vecs_pol,ref_set)
         pol_threshold, pol_f1, pol_precision, pol_recall, pol_tp,\

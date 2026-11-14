@@ -62,3 +62,50 @@ def test_polymer_search_accepts_custom_reference(mibig_pol):
     small["custom_ref_2"] = set(ref)
     stats = get_polymer_stats(small, ["custom_ref", "custom_ref_2"])
     assert set(stats) == {"TP", "FP"}
+
+
+# --- ties -----------------------------------------------------------------------------
+
+from discern.polymer_tools import best_polymer_match  # noqa: E402
+
+TIES = {
+    "R1": {"1_Ser", "1_Thr", "1_Ser - Thr"},     # references
+    "R2": {"1_Ser", "1_Thr", "1_Orn"},
+    "N1": {"1_Ser", "1_Gly"},                    # non-references
+    "N2": {"1_Pro"},                             # shares nothing with the others
+    "X": {"1_Ser", "1_Ala"},                     # ties R1, R2 and N1 at score 1
+}
+
+
+def test_tie_between_reference_and_non_reference_goes_outside_the_family():
+    assert best_polymer_match(TIES["X"], TIES, {"R1", "R2"}, skip="X") == (1, "N1")
+
+
+def test_ties_do_not_depend_on_dictionary_order():
+    reordered = dict(reversed(list(TIES.items())))
+    for name in TIES:
+        assert best_polymer_match(TIES[name], TIES, {"R1", "R2"}, skip=name) == \
+            best_polymer_match(TIES[name], reordered, {"R1", "R2"}, skip=name)
+    assert best_polymer_match({"1_Ser", "1_Thr"}, TIES) == (2, "R1")   # no ref_set: smallest name
+
+
+def test_no_shared_kmer_means_no_match():
+    assert best_polymer_match(TIES["N2"], TIES, {"R1"}, skip="N2") == (0, None)
+
+
+def test_training_ignores_ties_and_zero_scores_wherever_references_sit():
+    refs = {"R1", "R2"}
+    stats = get_polymer_stats(TIES, refs)
+    # R1 and R2 are each other's unique best match; X (tied with N1) and N2 (no
+    # overlap) are not false positives, whatever the order of the dictionary
+    assert stats == {"TP": [2, 2], "FP": []}
+    refs_last = {k: v for k, v in TIES.items() if k not in refs}
+    refs_last.update({k: TIES[k] for k in sorted(refs)})
+    assert get_polymer_stats(refs_last, refs) == stats
+
+
+def test_classification_settles_ties_like_training():
+    matches = get_polymer_matches({"genome.json": {"c::1": {"1_Ser", "1_Val"}, "c::2": {"1_Orn", "1_Ser"}}},
+                                  TIES, {"R1", "R2"})
+    assert matches["genome.json::c::1"] == (1, "N1")
+    assert matches["genome.json::c::2"] == (2, "R2")

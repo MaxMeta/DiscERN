@@ -388,6 +388,43 @@ def flatten_polymer_dicts(polymer_dict):
     return flattened_dict
 
 
+def best_polymer_match(kmers, candidates, ref_set=None, skip=None):
+    """
+    The candidate with the largest k-mer overlap with `kmers`, chosen without
+    depending on dictionary order. Used both to train the polymer threshold
+    (get_polymer_stats) and to classify queries (get_polymer_matches), so
+    both settle ties the same way.
+
+    Args:
+        kmers: a flat k-mer token set
+        candidates: {name: flat k-mer token set}
+        ref_set: the reference family. A tie between a reference and a
+                 non-reference goes to the non-reference, so a BGC only counts
+                 as matching the family when its best match is unambiguously
+                 a reference. Other ties go to the smallest name.
+        skip: a candidate to leave out (the BGC itself)
+    Returns:
+        (score, best match); (0, None) when nothing shares a k-mer
+    """
+    best_score = 0
+    tied = []
+    for name, other in candidates.items():
+        if name == skip:
+            continue
+        score = len(kmers & other)
+        if score > best_score:
+            best_score, tied = score, [name]
+        elif score == best_score and score > 0:
+            tied.append(name)
+    if best_score == 0:
+        return 0, None
+    if ref_set is not None:
+        outside = [name for name in tied if name not in ref_set]
+        if outside:
+            return best_score, min(outside)
+    return best_score, min(tied)
+
+
 def get_polymer_stats(mibig_flat,ref_set):
     """
     Args:
@@ -397,6 +434,8 @@ def get_polymer_stats(mibig_flat,ref_set):
     Proceedure:
         * Performs all against all determination of overlap in substrate kmer sets for mibig NRP/PK BGCs
         * Identifies all BGCs for which the best non-self match is in the ref-set
+          (see best_polymer_match: ties between a reference and a non-reference,
+          and BGCs sharing no k-mer with anything, do not count)
         * These are either TP or FP:
             > for TPs, a member of the ref_set has a best non-self match that is also in ref_set
             > for FPs, a mibig BGC that is not in the ref_set that has a best non-self match in the ref_set
@@ -406,17 +445,9 @@ def get_polymer_stats(mibig_flat,ref_set):
     """
     TP=[]
     FP=[]
+    ref_set=set(ref_set)
     for bgc in mibig_flat:
-        max_score=0
-        best_match='initial'
-        s1a=mibig_flat[bgc]
-        for ref in mibig_flat:
-            if not ref == bgc:
-                s2a=mibig_flat[ref]
-                score=len(s1a&s2a)
-                if score >= max_score:
-                    best_match=ref
-                    max_score=score
+        max_score, best_match = best_polymer_match(mibig_flat[bgc], mibig_flat, ref_set, skip=bgc)
         if best_match in ref_set:
             if bgc in ref_set:
                 TP.append(max_score)
@@ -425,7 +456,7 @@ def get_polymer_stats(mibig_flat,ref_set):
     
     TN=len(mibig_flat) -(len(TP) + len (FP))
     FN=len(ref_set)-len(TP)
-    F1_score=len(TP)/(len(TP)+0.5*(len(FP)+FN))
+    F1_score=len(TP)/(len(TP)+0.5*(len(FP)+FN)) if (TP or FP or FN) else 0.0
     print(f"TP: {len(TP)}, FP: {len(FP)}, TN: {TN}, FN: {FN}, F1_score: {F1_score}")
     
     return{"TP":TP,"FP":FP}
@@ -655,24 +686,20 @@ def make_reference_polymer_dict(ref_dir, k=5, as6=False):
     return ref_pol
 
 
-def get_polymer_matches(polymer_dict,mibig_vecs):
+def get_polymer_matches(polymer_dict,mibig_vecs,ref_set=None):
     """
     searches a dictionary of extracted polymer kmer vectors for bgcs to classify against ref_vecs
     returns a dictionary:
     {genome::bgc_name:(score,ref_hit),...}
-    score is len({query_kmers}&{ref_kmers}) for best hit in ref_vecs
+    score is len({query_kmers}&{ref_kmers}) for best hit in ref_vecs; ref_hit is
+    None when no k-mer is shared. Ties are settled as in get_polymer_stats
+    (best_polymer_match), so pass the same ref_set used for training.
     """
+    ref_set=set(ref_set) if ref_set is not None else None
     top_matches={}
     for genome in polymer_dict:
         for bgc in polymer_dict[genome]:
-            best_score=0
-            best_hit="initial"
-            for ref in mibig_vecs:
-                current_score=len(polymer_dict[genome][bgc]&mibig_vecs[ref])
-                if current_score>best_score:
-                    best_score=current_score
-                    best_hit=ref
-            top_matches[genome+"::"+bgc]=(best_score,best_hit)
+            top_matches[genome+"::"+bgc]=best_polymer_match(polymer_dict[genome][bgc],mibig_vecs,ref_set)
     return top_matches
 
 
