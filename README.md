@@ -189,7 +189,7 @@ discern -a <antismash_directory> -o <output_directory> -r <reference_bgcs> [OPTI
 *   `-s`, `--resmash`: If specified, DiscERN will automatically run antiSMASH on the final combined hit `.gbk` files. 
 *   `--as6`: Flag to indicate that the antiSMASH outputs were generated with antiSMASH version 6. This adjusts the parsing logic for polymer predictions.
 *   `--custom_refs`: A directory of custom reference BGCs to use together with the MIBiG references given with `-r`.
-*   `--cb_source`: Where the BLAST-derived vectors for `blast-vec` and `blast-rank` come from: `antismash` (default) parses antiSMASH KnownClusterBlast output and uses the bundled MIBiG data, as in the published results; `diamond` uses DiscERN's own DIAMOND search. See [Native Homology Search](#native-homology-search---cb_source-diamond).
+*   `--cb_source`: Where the BLAST-derived vectors for `blast-vec` and `blast-rank` come from: `antismash` (default) parses antiSMASH KnownClusterBlast output and uses the bundled MIBiG data, the setup used for the published results; `diamond` uses DiscERN's own DIAMOND search. See [Native Homology Search](#native-homology-search---cb_source-diamond).
 *   `--mibig_set`: With `--cb_source diamond`, which MIBiG set to use: `4.0` (default, MIBiG 4.0 as published) or `4.0_legacy` (4.0 plus the entries dropped before 4.0).
 
 #### **Advanced Options:**
@@ -323,7 +323,7 @@ discern -a ~/discern_test/inputs \
 
 The query hits against MIBiG are saved in the output folder (`cb_raw_mibig-<set>.json.gz`), so `-u` reuses them when you run another reference family on the same inputs. Each run writes `run_info.json` with the DiscERN version and commit, the blast source, MIBiG set and releases, DIAMOND version, search settings and the MIBiG and custom references used.
 
-`--cb_source diamond` is new and has not yet been re-benchmarked against the published results, which were produced with `--cb_source antismash`. Use the default to reproduce them.
+`--cb_source diamond` is new and has not yet been re-benchmarked against the published results, which were produced with `--cb_source antismash` in DiscERN v1.0.0. Bug fixes since then change some results with either source (see [CHANGELOG.md](CHANGELOG.md)); use the `v1.0.0` tag to reproduce the published numbers exactly.
 
 #### MIBiG releases and dropped entries
 
@@ -386,7 +386,7 @@ DiscERN creates a structured output directory to facilitate hit prioritization.
 ### Primary Hit Files
 The most important outputs are the combined GenBank files containing the identified BGCs and the corresponding antiSMASH output folders (if this option was enabled)
 
-*   `filtered_hits_k{k}.gbk`: These files contain BGCs that passed the conserved domain filter. The `{k}` indicates the number of algorithms that supported the hit. **These are your highest-priority targets.** A higher `k` value corresponds to higher confidence. Based on our benchmarking, `k≥3` yields very high precision (>95%).
+*   `filtered_hits_k{k}.gbk`: These files contain BGCs that passed the conserved domain filter. The `{k}` indicates the number of algorithms that supported the hit. **These are your highest-priority targets.** A higher `k` value corresponds to higher confidence. Based on our benchmarking, `k≥3` yields very high precision (>95%). (Benchmarked with DiscERN v1.0.0 and MIBiG references; the fixes listed in [CHANGELOG.md](CHANGELOG.md) change some results.)
 *   `unfiltered_hits_k{k}.gbk`: These files contain BGCs that were identified but are missing one or more of the core domains found in the reference family. These could be interesting but more divergent family members, or simply fragmented BGCs.
 *   if antiSMASH analysis of compiled results is enabled, you will also see directories with the same name as the gbk files. These contain antiSMASH outputs 
 
