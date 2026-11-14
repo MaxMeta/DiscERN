@@ -398,20 +398,63 @@ def make_counts(gbk_file: str,
         print(f"Error parsing file {gbk_file}: {e}")
         return {}  # Return an empty dictionary on error
 
-    # Convert defaultdict to regular dict (important for JSON serialisation)
+    # Convert defaultdict to regular dict (important for JSON serialisation).
+    # Always nested: an older version returned {pattern: count} when only one
+    # feature/qualifier combination matched, which find_conserved_features
+    # could not handle and which flattened to differently named keys
+    # (see nest_feature_counts).
     final_counts = {
         ftype: {q: dict(domain_counts) for q, domain_counts in qualifier_counts.items()}
         for ftype, qualifier_counts in counts.items()
     }
 
-    # Simplify if only one feature/qualifier combination exists
-    if len(final_counts) == 1:
-        first_feature = list(final_counts.keys())[0]
-        if len(final_counts[first_feature]) == 1:
-            first_qualifier = list(final_counts[first_feature].keys())[0]
-            return final_counts[first_feature][first_qualifier]
-
     return final_counts
+
+
+def feature_pattern_owners(feature_dict):
+    """{pattern: (feature type, qualifier)} for the patterns in a feature_dict."""
+    owners = {}
+    for ftype, qualifiers in feature_dict.items():
+        for qualifier, patterns in qualifiers.items():
+            for pattern in patterns:
+                if pattern in owners and owners[pattern] != (ftype, qualifier):
+                    raise ValueError(f"feature pattern {pattern!r} is listed under more than one qualifier")
+                owners[pattern] = (ftype, qualifier)
+    return owners
+
+
+def nest_feature_counts(counts, feature_dict, owners=None):
+    """
+    Return feature counts in the nested {feature: {qualifier: {pattern: count}}}
+    form. Older make_counts output (including the bundled mibig_counts_rf.json)
+    is {pattern: count} when only one feature/qualifier combination matched;
+    each pattern belongs to exactly one qualifier, so the nesting is restored
+    from feature_dict.
+    """
+    if not counts or all(isinstance(v, dict) for v in counts.values()):
+        return counts or {}
+    owners = owners or feature_pattern_owners(feature_dict)
+    nested = {}
+    for pattern, count in counts.items():
+        ftype, qualifier = owners[pattern]
+        nested.setdefault(ftype, {}).setdefault(qualifier, {})[pattern] = count
+    return nested
+
+
+def qualify_feature_keys(flat_counts, feature_dict, owners=None):
+    """
+    Flattened feature counts with every key in the 'feature.qualifier.pattern'
+    form: counts flattened from the older simplified form have bare pattern
+    keys, which never matched the conserved features they were compared with.
+    """
+    owners = owners or feature_pattern_owners(feature_dict)
+    qualified = {}
+    for key, count in flat_counts.items():
+        if key in owners:
+            ftype, qualifier = owners[key]
+            key = f"{ftype}.{qualifier}.{key}"
+        qualified[key] = count
+    return qualified
 
 
 def process_file_chunk(file_chunk,feature_dict):
@@ -687,8 +730,37 @@ def find_conserved_features(feature_counts_list: List[Dict]) -> Dict:
     return dict(conserved_counts)
     
 
+def conserved_features_from_counts(named_counts, feature_dict):
+    """
+    Features present in every reference, with their minimum count.
+
+    Args:
+        named_counts: list of (name, counts) with counts from make_counts, in the
+                      nested or the older simplified form
+    Returns:
+        (flat {'feature.qualifier.pattern': minimum count},
+         names whose counts are empty and were left out)
+
+    A reference that lacks a feature counts as zero for it, so every reference
+    passes the filter built from its own family. (find_conserved_features skips
+    a reference that lacks a whole qualifier instead.) A reference with no
+    counts at all - no matching feature, or no antiSMASH annotation in its
+    GenBank file - carries no information and is left out rather than
+    emptying the filter.
+    """
+    owners = feature_pattern_owners(feature_dict)
+    flat_list = []
+    empty = []
+    for name, counts in named_counts:
+        if not counts:
+            empty.append(name)
+            continue
+        flat_list.append(flatten_nested_dict(nest_feature_counts(counts, feature_dict, owners)))
+    return find_conserved_flat_features(flat_list), empty
+
+
 def analyse_mibig_set(ref_set: Union[List[str], Set[str]],
-                        mibig_counts: Dict) -> Dict:
+                        mibig_counts: Dict, feature_dict: Dict) -> Dict:
     """
     Finds conserved features in a specified set of mibig BGCs
 
@@ -698,81 +770,67 @@ def analyse_mibig_set(ref_set: Union[List[str], Set[str]],
                 BGCs to analyse for conserved features
         mibig_counts:
                 Dictionary of feature counts for all mibig BGCs
+        feature_dict:
+                The feature definitions the counts were made with
 
     Returns:
-        A sparse dictionary of conserved features and their minimum counts across all
-        BGCs.  Returns an empty dictionary if no BGCs specified 
-        or if no conserved features with counts > 0 are found.
-
+        A flat dictionary of conserved features and their minimum counts
+        (see conserved_features_from_counts). MIBiG BGCs without counts are
+        reported and left out.
     """
-
-    feature_counts_list = []
+    named = []
     for bgc in ref_set:
-        try:
-            feature_counts_list.append(mibig_counts[bgc])
-        except Exception as e:
-            print(f"Error processing {bgc}: {e}")
-    conserved_features = find_conserved_features(feature_counts_list)
-    return conserved_features
+        if bgc in mibig_counts:
+            named.append((bgc, mibig_counts[bgc]))
+        else:
+            print(f"Error processing {bgc}: no feature counts")
+    return conserved_features_from_counts(named, feature_dict)[0]
+
 
 def analyse_genbank_set(gbk_set: Union[List[str], Set[str]],
                         search_criteria: Dict[str, Dict[str, List[str]]]) -> Dict:
     """
-    Analyzes a directory of GenBank files, calculates feature counts, and finds conserved features.
+    Calculates feature counts for GenBank files and finds conserved features.
 
     Args:
-        gbk_list: a list containing paths forthe GenBank (.gbk) files to be analysed
+        gbk_set: paths of the GenBank (.gbk) files to be analysed
         search_criteria:  The dictionary defining feature types, qualifiers, and domains
                          to search for (same structure as for make_counts).
 
     Returns:
-        A flat dictionary of conserved features and their minimum counts across all
-        GenBank files, keyed like flatten_nested_dict(make_counts(...)), i.e. like the
-        query feature counts used by filter_by_domains. Returns an empty dictionary if
-        no files are given or if no conserved features with counts > 0 are found.
+        A flat dictionary of conserved features and their minimum counts
+        (see conserved_features_from_counts).
 
     Raises:
         ValueError: If the search_criteria is empty.
     """
-
-
     if not search_criteria:
         raise ValueError("search_criteria cannot be empty.")
-
-    feature_counts_list = []
-    for filepath in gbk_set:
-        try:
-            counts = make_counts(filepath, search_criteria)
-            # make_counts returns {pattern: count} rather than the nested
-            # {feature: {qualifier: {pattern: count}}} form when only one
-            # feature/qualifier combination matched, which find_conserved_features
-            # cannot handle. Compare flattened counts instead.
-            feature_counts_list.append(flatten_nested_dict(counts))
-        except Exception as e:
-            print(f"Error processing {filepath}: {e}")
-    return find_conserved_flat_features(feature_counts_list)
+    named = [(path, make_counts(path, search_criteria)) for path in gbk_set]
+    return conserved_features_from_counts(named, search_criteria)[0]
 
 
 def conserved_features_for_references(mibig_refs, mibig_counts, custom_gbk_paths, feature_dict):
     """
-    Conserved features across a mixed reference set: bundled counts for the
-    MIBiG references plus make_counts on the custom reference GenBank files.
-    Counts are flattened before comparison, so make_counts' simplified form
-    (one feature/qualifier combination) is handled.
+    Conserved features across a reference set: bundled counts for the MIBiG
+    references plus make_counts on the custom reference GenBank files.
 
     Returns:
-        (flat {feature: minimum count}, sorted MIBiG references without bundled counts)
+        (flat {feature: minimum count},
+         sorted MIBiG references without bundled counts,
+         references whose counts are empty; both groups are left out)
     """
-    counts_list = []
+    named = []
     missing = []
     for bgc in sorted(mibig_refs):
         if bgc in mibig_counts:
-            counts_list.append(flatten_nested_dict(mibig_counts[bgc]))
+            named.append((bgc, mibig_counts[bgc]))
         else:
             missing.append(bgc)
     for path in custom_gbk_paths:
-        counts_list.append(flatten_nested_dict(make_counts(path, feature_dict)))
-    return find_conserved_flat_features(counts_list), missing
+        named.append((os.path.basename(path).rsplit(".", 1)[0], make_counts(path, feature_dict)))
+    features, empty = conserved_features_from_counts(named, feature_dict)
+    return features, missing, empty
 
 
 def find_conserved_flat_features(flat_counts_list: List[Dict[str, int]]) -> Dict[str, int]:

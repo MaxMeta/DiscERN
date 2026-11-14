@@ -472,6 +472,10 @@ def main():
         print("loading previously constructed feature counts from file")
         with open(os.path.join(reuse,"feature_counts.json")) as F:
             all_counts=json.load(F)
+        # counts saved by older versions can have bare pattern keys
+        owners=feature_pattern_owners(feature_dict)
+        all_counts={key:qualify_feature_keys(counts,feature_dict,owners)
+                    for key,counts in all_counts.items()}
     else:
         print("making feature counts")  
         all_counts = make_all_feature_counts(antismash_dir,num_cpus,feature_dict)
@@ -494,22 +498,15 @@ def main():
 
 
 
-    if ref_dir:
-        print('finding conserved features in the reference BGCs '
-              '(bundled counts for MIBiG references, custom reference gbk files)')
-        conserved_features, no_counts = conserved_features_for_references(
-            mibig_refs, mibig_counts, ref_gbk_paths, feature_dict)
-        if no_counts:
-            print(f"note: no bundled feature counts for MIBiG references {' '.join(no_counts)}; "
-                  "they are left out of the conserved-domain filter")
-    else:
-        print('finding conserved features from mibig vecs')
-        no_counts=sorted(bgc for bgc in ref_set if bgc not in mibig_counts)
-        if no_counts:
-            print(f"note: no bundled feature counts for MIBiG references {' '.join(no_counts)}; "
-                  "they are left out of the conserved-domain filter")
-        conserved_features=flatten_nested_dict(analyse_mibig_set(
-            [bgc for bgc in ref_set if bgc in mibig_counts], mibig_counts))
+    print('finding conserved features in the reference BGCs')
+    conserved_features, no_counts, empty_counts = conserved_features_for_references(
+        mibig_refs, mibig_counts, ref_gbk_paths, feature_dict)
+    if no_counts:
+        print(f"note: no bundled feature counts for MIBiG references {' '.join(no_counts)}; "
+              "they are left out of the conserved-domain filter")
+    if empty_counts:
+        print(f"note: no domain or smCOG features were found for {' '.join(empty_counts)}; "
+              "they are left out of the conserved-domain filter")
     print(f'found {len(conserved_features)} conserved features')
     if not conserved_features:
         print("warning: no features are conserved across all reference BGCs, "

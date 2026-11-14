@@ -96,10 +96,12 @@ def test_conserved_features_merge_mibig_counts_and_custom_gbks(monkeypatch):
     }
     custom = {"ref.gbk": {"CDS": {"NRPS_PKS": {"Domain: AMP-binding": 3}}}}
     monkeypatch.setattr(funcs_2, "make_counts", lambda path, criteria: custom[path])
-    features, missing = conserved_features_for_references(
-        {"BGC0000001", "BGC0000002", "BGC0000999"}, mibig_counts, ["ref.gbk"], {})
+    features, missing, empty = conserved_features_for_references(
+        {"BGC0000001", "BGC0000002", "BGC0000999"}, mibig_counts, ["ref.gbk"],
+        {"CDS": {"NRPS_PKS": ["Domain: AMP-binding", "Domain: TE"]}})
     assert features == {"CDS.NRPS_PKS.Domain: AMP-binding": 2}
     assert missing == ["BGC0000999"]
+    assert empty == []
 
 
 # --- trees ------------------------------------------------------------------------------
