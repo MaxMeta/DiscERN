@@ -475,36 +475,40 @@ def calculate_f1(tp: int, fp: int, fn: int) -> float:
 
 
 def find_best_f1_threshold(
-    tp_scores: List[float],
-    fp_scores: List[float],
+    tp_scores: List[int],
+    fp_scores: List[int],
     total_true_positives: Optional[int] = None,
     stringent: bool = False
-) -> Tuple[Optional[float], float, float, float, int, int, int]:
+) -> Tuple[Optional[int], float, float, float, int, int, int]:
     """
     Iterates through possible thresholds to find the one that maximizes F1-score.
 
     Args:
-        tp_scores: A list of scores for items known to be true positives.
-        fp_scores: A list of scores for items known to be true negatives
-                   (these become false positives if they exceed the threshold).
+        tp_scores: Whole-number scores (shared k-mer counts) for items known to
+                   be true positives.
+        fp_scores: Whole-number scores for items known to be true negatives
+                   (these become false positives if they reach the cutoff).
         total_true_positives: The total number of actual positive items in the
                               entire dataset. If None, it's assumed to be len(tp_scores),
                               meaning all true positives received a score.
+        stringent: never return a cutoff below the lowest true-positive score
+                   (otherwise use the midpoint between the two).
 
     Returns:
         A tuple containing:
-        - best_threshold (float or None if no valid threshold found)
-        - max_f1_score (float)
-        - best_precision (float)
-        - best_recall (float)
-        - tp_at_best_threshold (int)
-        - fp_at_best_threshold (int)
-        - fn_at_best_threshold (int)
-        
+        - cutoff (int, applied as score >= cutoff; None if there are no scores)
+        - f1_score (float)
+        - precision (float)
+        - recall (float)
+        - tp_at_cutoff (int)
+        - fp_at_cutoff (int)
+        - fn_at_cutoff (int)
+        The counts and scores describe the returned cutoff.
+
     Subsequent use for classification:
         An unknown BGC is classified as a member of the ref_set if:
             1) its best match among all mibig vectors is in the ref_set
-            2) the size of its overlap with the substrate kmer set of this match exceets the best threshold
+            2) the size of its overlap with the substrate kmer set of this match is at least the cutoff
     """
     if total_true_positives is None:
         # Assume all true positives are in tp_scores if not specified
@@ -591,7 +595,12 @@ def find_best_f1_threshold(
                     best_recall = current_recall_for_tie_break
         min_tp=min(tp_scores)
 
-    best_threshold=int(np.round(best_threshold))
+    # Scores are whole numbers (shared k-mer counts) and a match passes when
+    # score >= cutoff. The best threshold can sit just above a score (9.000001,
+    # "more than 9"), so it is applied as the smallest whole number it lets
+    # through: rounded up. Rounding to the nearest number turned 9.000001 into
+    # 9 and let through scores of 9 that training had rejected.
+    best_threshold=int(np.ceil(best_threshold))
 
     if best_threshold < min_tp:
         print(min_tp, best_threshold, max_f1)
@@ -600,15 +609,14 @@ def find_best_f1_threshold(
         else:
             best_threshold=int(np.round((best_threshold+min_tp)/2))
 
-        
+    # report the counts at the cutoff that is actually applied
+    tp_at_best = int(np.sum(np_tp_scores >= best_threshold))
+    fp_at_best = int(np.sum(np_fp_scores >= best_threshold))
+    fn_at_best = total_true_positives - tp_at_best
+    max_f1 = calculate_f1(tp_at_best, fp_at_best, fn_at_best)
+    best_precision = tp_at_best / (tp_at_best + fp_at_best) if tp_at_best else 0.0
+    best_recall = tp_at_best / total_true_positives if total_true_positives else 0.0
 
-        tp_at_best = np.sum(np_tp_scores >= best_threshold)
-        fp_at_best = np.sum(np_fp_scores >= best_threshold)
-        fn_at_best = total_true_positives - tp_at_best
-        max_f1 = calculate_f1(tp_at_best, fp_at_best, fn_at_best)
-        
-
-    
     return best_threshold, max_f1, best_precision, best_recall, tp_at_best, fp_at_best, fn_at_best
 
 

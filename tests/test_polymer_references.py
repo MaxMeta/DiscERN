@@ -109,3 +109,52 @@ def test_classification_settles_ties_like_training():
                                   TIES, {"R1", "R2"})
     assert matches["genome.json::c::1"] == (1, "N1")
     assert matches["genome.json::c::2"] == (2, "R2")
+
+
+# --- cutoff -------------------------------------------------------------------------------
+
+import random  # noqa: E402
+
+from discern.polymer_tools import calculate_f1, find_best_f1_threshold  # noqa: E402
+
+
+def counts_at(cutoff, tp_scores, fp_scores):
+    tp = sum(score >= cutoff for score in tp_scores)
+    fp = sum(score >= cutoff for score in fp_scores)
+    return tp, fp, len(tp_scores) - tp
+
+
+def test_cutoff_rejects_the_score_training_rejected():
+    # the best cutoff is "more than 9"; it used to be applied as >= 9, letting both 9s through
+    tp_scores, fp_scores = [8, 10, 11, 12, 13], [9, 9]
+    threshold, f1, precision, recall, tp, fp, fn = find_best_f1_threshold(tp_scores, fp_scores, stringent=True)
+    assert threshold == 10
+    assert (tp, fp, fn) == (4, 0, 1)
+    assert (f1, precision, recall) == (calculate_f1(4, 0, 1), 1.0, 0.8)
+
+
+def test_cda_family_before_the_tie_fix():
+    # the CDA walkthrough family's training scores before polymer ties were fixed
+    tp_scores = [7, 8, 10, 13, 13, 15, 15, 27, 27, 37, 37]
+    fp_scores = [1] * 10 + [2] * 3 + [3, 4, 5, 5, 5, 6, 6, 7, 8, 9]
+    threshold, f1, precision, recall, tp, fp, fn = find_best_f1_threshold(tp_scores, fp_scores, stringent=True)
+    assert threshold == 10          # was 9, which let the false positive scoring 9 through
+    assert (tp, fp, fn) == counts_at(10, tp_scores, fp_scores) == (9, 0, 2)
+    assert (precision, recall) == (1.0, 9 / 11)
+
+
+@pytest.mark.parametrize("stringent", [True, False])
+def test_applied_cutoff_keeps_the_best_f1_and_reports_its_own_counts(stringent):
+    rng = random.Random(0)
+    for _ in range(500):
+        tp_scores = [rng.randint(0, 30) for _ in range(rng.randint(1, 12))]
+        fp_scores = [rng.randint(0, 30) for _ in range(rng.randint(0, 30))]
+        threshold, f1, precision, recall, tp, fp, fn = find_best_f1_threshold(
+            tp_scores, fp_scores, stringent=stringent)
+        assert isinstance(threshold, int)
+        if stringent:
+            assert threshold >= min(tp_scores)
+        assert (tp, fp, fn) == counts_at(threshold, tp_scores, fp_scores)
+        assert f1 == calculate_f1(tp, fp, fn)
+        best = max(calculate_f1(*counts_at(c, tp_scores, fp_scores)) for c in range(0, 32))
+        assert f1 == best, (tp_scores, fp_scores, threshold)
