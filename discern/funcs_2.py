@@ -1359,7 +1359,10 @@ def find_hits_intersection(mibig_cb_dict,
         is_hit=False
         if len(all_lists[key])<index+1:
             continue
-        to_check=set(all_lists[key][:index])
+        # the signature is `value` family members within the top index+1
+        # hits (intersect_list[index] is computed on prefixes of that
+        # length), so check the same number of hits for the query
+        to_check=set(all_lists[key][:index+1])
         if len(to_check&reference_set)>=value:
             is_hit=True
         if stringent and not all_lists[key][0] in reference_set:

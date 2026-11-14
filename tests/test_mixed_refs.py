@@ -110,3 +110,21 @@ def test_polymer_tree_tolerates_references_without_polymer_data(tmp_path):
     make_trees(str(tmp_path), [], refs, {}, {}, {}, {}, {}, pol,
                use_pol=True, use_bs=False, use_cb=False)
     assert (tmp_path / "newick_tree.txt").exists()
+
+
+# --- BLAST-rank prefix length -------------------------------------------------------
+
+def test_blast_rank_checks_as_many_hits_as_the_signature_uses():
+    # every reference's top 2 non-self hits are family members: the signature is
+    # "2 family members within the top 2", which a query must be able to meet
+    refs = {
+        "A": {"A": 900, "B": 800, "C": 700, "X": 10},
+        "B": {"B": 900, "A": 800, "C": 700, "X": 10},
+        "C": {"C": 900, "A": 800, "B": 700, "X": 10},
+    }
+    queries = {
+        "tight.gbk": {"A": 500, "B": 400, "X": 300},    # top 2 both in the family
+        "loose.gbk": {"A": 500, "X": 400, "B": 300},    # only 1 in the top 2
+    }
+    assert find_hits_intersection(refs, queries, ["A", "B", "C"], drop_self_by_id=True) == ["tight.gbk"]
+    assert find_hits_intersection(refs, queries, ["A", "B", "C"]) == ["tight.gbk"]
