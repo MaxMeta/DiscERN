@@ -6,6 +6,7 @@
 
 ## Table of Contents
 *   [Overview](#overview)
+*   [Changes Since v1.0.0](#changes-since-v100)
 *   [Installation](#install-instructions)    
 *   [How DiscERN Works](#how-discern-works)
     *   [Core Algorithmic Approaches](#core-algorithmic-approaches)
@@ -24,6 +25,25 @@
 DiscERN is an automated genome mining tool for the targeted discovery of bacterial natural products. It expands user-defined families of Biosynthetic Gene Clusters (BGCs) by identifying evolutionarily related BGCs from large genomic datasets.
 
 To achieve this, DiscERN uses a flexible ensemble method that integrates four complementary algorithms. These algorithms classify BGCs based on three distinct measures of relatedness: Pfam domain content, direct protein sequence similarity, and predicted final product structure. This multi-modal approach allows DiscERN to strategically balance discovery sensitivity with predictive precision, providing a reliable path from genomic data to a prioritized list of candidate BGCs.
+
+## Changes Since v1.0.0
+
+> [!IMPORTANT]
+> The benchmarks in the DiscERN paper, including the k≥3 precision figure (>95%), were produced with DiscERN v1.0.0 using MIBiG references and antiSMASH KnownClusterBlast output (`--cb_source antismash`, still the default). This version fixes bugs that change some results even with those default settings, and adds options the benchmarks did not cover. It has not yet been fully re-benchmarked, so precision and recall may have shifted somewhat from the published figures. To reproduce the published results exactly, use the `v1.0.0` tag. This section will be updated once re-benchmarking is done.
+
+**Fixes that can change results with the default settings** (details in [CHANGELOG.md](CHANGELOG.md)):
+
+*   **BLAST-rank** checked each query's top hits against a family signature learned from one more hit than it checked. It now checks the same number, so it can find more hits in large, tight families.
+*   **Polymer method:** ties between equally good matches were settled by input order, and differently in training and in classification. They are now settled the same way in both, independently of order. The trained cutoff is also now applied as trained (it was sometimes one lower). Together these remove spurious false positives from training and can move the cutoff up or down.
+*   **Conserved-domain filter:** reference sets with MIBiG entries whose feature counts were stored in a simplified form (most RiPPs and terpenes) could crash, and query regions stored in that form were never matched. Both now work, so some hits move between `filtered` and `unfiltered`.
+*   KnownClusterBlast output from antiSMASH 8 (MIBiG IDs with a version suffix) is now read correctly.
+
+**New, and not covered by the published benchmarks:**
+
+*   Custom reference BGCs (`-r <directory>`) now work and can be mixed with MIBiG references (`--custom_refs`). See [Custom Reference BGCs](#custom-reference-bgcs).
+*   `--cb_source diamond`, DiscERN's own DIAMOND search against MIBiG 4.0 (or `4.0_legacy`, which restores entries dropped from MIBiG) and custom references. See [Native Homology Search](#native-homology-search---cb_source-diamond).
+
+On the two-genome walkthrough data the changes were small: one glycopeptide region moved from k=2 to k=3, and the polymer method's hits were unchanged although its training false positives fell (CDA family: 23 to 5, cutoff 9 to 7). This is an illustration, not a benchmark.
 
 
 ## Installation
@@ -323,7 +343,7 @@ discern -a ~/discern_test/inputs \
 
 The query hits against MIBiG are saved in the output folder (`cb_raw_mibig-<set>.json.gz`), so `-u` reuses them when you run another reference family on the same inputs. Each run writes `run_info.json` with the DiscERN version and commit, the blast source, MIBiG set and releases, DIAMOND version, search settings and the MIBiG and custom references used.
 
-`--cb_source diamond` is new and has not yet been re-benchmarked against the published results, which were produced with `--cb_source antismash` in DiscERN v1.0.0. Bug fixes since then change some results with either source (see [CHANGELOG.md](CHANGELOG.md)); use the `v1.0.0` tag to reproduce the published numbers exactly.
+`--cb_source diamond` is new and has not yet been re-benchmarked against the published results, which were produced with `--cb_source antismash` in DiscERN v1.0.0. Bug fixes since then change some results with either source (see [Changes Since v1.0.0](#changes-since-v100)); use the `v1.0.0` tag to reproduce the published numbers exactly.
 
 #### MIBiG releases and dropped entries
 
@@ -386,7 +406,7 @@ DiscERN creates a structured output directory to facilitate hit prioritization.
 ### Primary Hit Files
 The most important outputs are the combined GenBank files containing the identified BGCs and the corresponding antiSMASH output folders (if this option was enabled)
 
-*   `filtered_hits_k{k}.gbk`: These files contain BGCs that passed the conserved domain filter. The `{k}` indicates the number of algorithms that supported the hit. **These are your highest-priority targets.** A higher `k` value corresponds to higher confidence. Based on our benchmarking, `k≥3` yields very high precision (>95%). (Benchmarked with DiscERN v1.0.0 and MIBiG references; the fixes listed in [CHANGELOG.md](CHANGELOG.md) change some results.)
+*   `filtered_hits_k{k}.gbk`: These files contain BGCs that passed the conserved domain filter. The `{k}` indicates the number of algorithms that supported the hit. **These are your highest-priority targets.** A higher `k` value corresponds to higher confidence. Based on our benchmarking, `k≥3` yields very high precision (>95%). (Benchmarked with DiscERN v1.0.0 and MIBiG references; see [Changes Since v1.0.0](#changes-since-v100) for why current results may differ.)
 *   `unfiltered_hits_k{k}.gbk`: These files contain BGCs that were identified but are missing one or more of the core domains found in the reference family. These could be interesting but more divergent family members, or simply fragmented BGCs.
 *   if antiSMASH analysis of compiled results is enabled, you will also see directories with the same name as the gbk files. These contain antiSMASH outputs 
 
